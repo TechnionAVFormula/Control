@@ -24,12 +24,12 @@ https://en.wikipedia.org/wiki/Transient_response
 https://en.wikipedia.org/wiki/Damping_ratio  
 https://www.brown.edu/Departments/Engineering/Courses/En4/Notes/vibrations_free_damped/vibrations_free_damped.htm
 
-
 3. PID controler
 https://www.youtube.com/watch?v=wkfEZmsQqiA 
 https://en.wikipedia.org/wiki/PID_controller  
 
- 
+4. PID stability and control
+ https://www.youtube.com/watch?v=uqjKG32AkC4  
 
 
  
