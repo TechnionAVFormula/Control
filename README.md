@@ -15,4 +15,21 @@ https://gym.openai.com/envs/CarRacing-v0/
 3. A git repository that explains and uses py.game
 https://github.com/ntasfi/PyGame-Learning-Environment
 
+### Basic Controlers
+1. The basics of process control diagrams
+https://www.techtransfer.com/blog/basics-process-control-diagrams/ 
+
+2. Transient response, Damping 
+https://en.wikipedia.org/wiki/Transient_response 
+https://en.wikipedia.org/wiki/Damping_ratio  
+https://www.brown.edu/Departments/Engineering/Courses/En4/Notes/vibrations_free_damped/vibrations_free_damped.htm
+
+
+3. PID controler
+https://www.youtube.com/watch?v=wkfEZmsQqiA 
+https://en.wikipedia.org/wiki/PID_controller  
+
+ 
+
+
  
