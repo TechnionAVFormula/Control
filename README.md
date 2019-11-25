@@ -31,5 +31,8 @@ https://en.wikipedia.org/wiki/PID_controller
 4. PID stability and control
  https://www.youtube.com/watch?v=uqjKG32AkC4  
 
+5. Motion controllers comparison
+ https://www.ri.cmu.edu/pub_files/2009/2/Automatic_Steering_Methods_for_Autonomous_Automobile_Path_Tracking.pdf
+
 
  
