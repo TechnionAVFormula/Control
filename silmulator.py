@@ -63,7 +63,7 @@ TRACK_WIDTH =40/SCALE  #40/SCALE
 BORDER =0/SCALE   #8/SCALE
 BORDER_MIN_COUNT =4  # 4
 
-ROAD_COLOR =[0, 0, 10]  # [0.4, 0.4, 0.4]
+ROAD_COLOR =[0.4, 0.4,0.4]  # [0.4, 0.4, 0.4]
 
 class FrictionDetector(contactListener):
     def __init__(self, env):
@@ -443,6 +443,26 @@ class CarRacing(gym.Env, EzPickle):
             gl.glColor4f(color[0], color[1], color[2], 1)
             for p in poly:
                 gl.glVertex3f(p[0], p[1], 0)
+
+
+        #ORR        
+        data=[val[0] for val in self.road_poly if type(val[1])==list]
+        inside=[info[0] for info in data]
+        outside=[info[1] for info in data]
+        for obj in inside:
+            gl.glColor4f(0, 0, 1,1)
+            gl.glVertex3f(obj[0]+0.5,obj[1]+ 0.5, 0)
+            gl.glVertex3f(obj[0]+0.5,obj[1]- 0.5, 0)
+            gl.glVertex3f(obj[0]-0.5,obj[1]+ 0.5, 0)
+            gl.glVertex3f(obj[0]-0.5,obj[1]- 0.5, 0)
+        for obj in outside:
+            #rgb(255,255,0)
+            gl.glColor4f(1,1,0, 1)
+            gl.glVertex3f(obj[0]+0.5,obj[1]+ 0.5, 0)
+            gl.glVertex3f(obj[0]+0.5,obj[1]- 0.5, 0)
+            gl.glVertex3f(obj[0]-0.5,obj[1]+ 0.5, 0)
+            gl.glVertex3f(obj[0]-0.5,obj[1]- 0.5, 0)
+
         gl.glEnd()
 
     def render_indicators(self, W, H):
@@ -474,6 +494,7 @@ class CarRacing(gym.Env, EzPickle):
         vertical_ind(10,0.01*self.car.wheels[3].omega, (0.2,0,1))
         horiz_ind(20, -10.0*self.car.wheels[0].joint.angle, (0,1,0))
         horiz_ind(30, -0.8*self.car.hull.angularVelocity, (1,0,0))
+        
         gl.glEnd()
         self.score_label.text = "%04i" % self.reward
         #self.score_label.draw()
