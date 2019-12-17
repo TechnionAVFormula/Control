@@ -1,5 +1,6 @@
 from gym.envs.box2d.car_dynamics import Car
 class carinherit(Car):
+    
     def forward_speed():
         for w in self.wheels:
             # Force
