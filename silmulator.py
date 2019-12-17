@@ -13,7 +13,7 @@ import pyglet
 from pyglet import gl
 import matplotlib.pyplot as plt
 
-#hii
+#hii-bii
 
 # Easiest continuous control task to learn from pixels, a top-down racing environment.
 # Discrete control is reasonable in this environment as well, on/off discretization is
@@ -47,7 +47,7 @@ STATE_H =960  # less than Atari 160x192
 VIDEO_W =600 #600
 VIDEO_H =400 #400
 WINDOW_W =1000 #1000
-WINDOW_H =1000 #800
+WINDOW_H =700 #800
 
 SCALE       = 6.0        # Track scale
 TRACK_RAD   = 900/SCALE    #900/SCALE  # Track is heavily morphed circle with this radius
