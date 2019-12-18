@@ -1,6 +1,7 @@
 import sys, math
 import numpy as np
 
+
 import Box2D
 from Box2D.b2 import (edgeShape, circleShape, fixtureDef, polygonShape, revoluteJointDef, contactListener)
 from carinherit import CarInherit
@@ -317,7 +318,7 @@ class CarRacing(gym.Env, EzPickle):
             if self.verbose == 1:
                 print("retry to generate track (normal if there are not many of this messages)")
         self.car = CarInherit(self.world, *self.track[0][1:4])
-
+   
         return self.step(None)[0]
 
     def step(self, action):
@@ -327,7 +328,8 @@ class CarRacing(gym.Env, EzPickle):
             self.car.brake(action[2])
         
             
-        self.car.step(1.0/FPS)
+        myDic=self.car.step(1.0/FPS)
+        print(myDic)
         self.world.Step(1.0/FPS, 6*30, 2*30)
         self.t += 1.0/FPS
 
