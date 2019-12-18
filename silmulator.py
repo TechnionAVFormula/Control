@@ -329,7 +329,6 @@ class CarRacing(gym.Env, EzPickle):
         
             
         myDic=self.car.step(1.0/FPS)
-        print(myDic)
         self.world.Step(1.0/FPS, 6*30, 2*30)
         self.t += 1.0/FPS
 
@@ -351,7 +350,7 @@ class CarRacing(gym.Env, EzPickle):
                 done = True
                 step_reward = -100
 
-        return self.state, step_reward, done, {}
+        return self.state, step_reward, done,myDic
 
     def render(self, mode='human'):
         assert mode in ['human', 'state_pixels', 'rgb_array']

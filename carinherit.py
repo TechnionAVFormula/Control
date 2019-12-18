@@ -98,9 +98,9 @@ class CarInherit(Car):
             w.ApplyForceToCenter( (
                 p_force*side[0] + f_force*forw[0],
                 p_force*side[1] + f_force*forw[1]), True )
-        myDic["forwardSpeed"]=forwardSpeed
-        myDic["sideSpeed"]=sideSpeed
-        myDic["routingSpeed"]=routingSpeed
+        myDic["forwardSpeed"]=(forwardSpeed/4)
+        myDic["sideSpeed"]=(sideSpeed/4)
+        myDic["routingSpeed"]=(routingSpeed/4)
         return myDic.copy()        
 
    
