@@ -2,30 +2,27 @@ import math
 import numpy as np
 
 class PurePursuitController:
-    """
-        this a class to define a controller object of a pure pursuite controller
+    """[this a class to define a controller object of a pure pursuite controller
         
         the controller gets
             the current state of the car(x,y coordinates, velocity and current angle),
             the currnet path that the car should follow
         and then calculates the steering angle requiered to course correct according to the car's velocity
-        in order to update the data in the controller it's update methods need to be called.
-    """
+        in order to update the data in the controller it's update methods need to be called.]
     
-    path = None
-    coordinates = []
-    orientation = 0
-    velocity = 0
-    _car_length = 0 
-    _max_steering_angle = 0  # based on vehicle data and physical limits
-    _kdd = 1                 # ld=kdd*v, ld=lookahead distance
-    _poly_fit_deg = 3
+    Returns:
+        calculate_steering [double] -- [the requierd steering angle in radians to course correct]
+    """    
 
-    def __init__(self, car_length, kdd, max_steering_angle, poly_fit_deg): # initializes the controller and sets the initial values
+    def __init__(self, car_length=3, kdd=1, max_steering_angle=24, poly_fit_deg=3): # initializes the controller and sets the initial values
         self._car_length = car_length
         self._kdd = kdd
-        self._max_steering_angle = max_steering_angle
+        self._max_steering_angle = max_steering_angle*2*math.pi/360
         self._poly_fit_deg  = poly_fit_deg
+        self.path = []
+        self.coordinates = []
+        self.orientation = 0
+        self.velocity = 0
             
     def update_state(self, x, y, v, orientation): # update the current state of the car in the controller for calculations
         self.coordinates = [x, y]
@@ -52,7 +49,7 @@ class PurePursuitController:
 
         point_index = self._target_point_index(swapped_axis_path[0][near_point_index:], swapped_axis_path[1][near_point_index:], ld)
         
-        x_sector = np.linspace(self.path[(near_point_index+point_index-1)[0]], self.path[near_point_index+point_index[0]], 5)
+        x_sector = np.linspace(self.path[near_point_index+point_index-1][0], self.path[near_point_index+point_index][0], 5)
         y_sector = np.polyval(p, x_sector)
         
         point_index = self._target_point_index(x_sector, y_sector, ld)
@@ -60,7 +57,7 @@ class PurePursuitController:
         return [x_sector[point_index], y_sector[point_index]]
 
     def _find_near_point_index(self):
-        near_point = [self.path[0]]
+        near_point = self.path[0]
         near_point_distance = self._point_distance(near_point)
         for way_point in self.path:
             way_point_distance = self._point_distance(way_point)
