@@ -300,6 +300,7 @@ class CarRacing(gym.Env, EzPickle):
                 b2_r = (x2 + side*(TRACK_WIDTH+BORDER)*math.cos(beta2), y2 + side*(TRACK_WIDTH+BORDER)*math.sin(beta2))
                 self.road_poly.append(( [b1_l, b1_r, b2_r, b2_l], (1,1,1) if i%2==0 else (1,0,0) ))
         self.track = track
+        #self.track[0][1:4]=(0,0,0)
 
         return True
 
@@ -317,8 +318,9 @@ class CarRacing(gym.Env, EzPickle):
                 break
             if self.verbose == 1:
                 print("retry to generate track (normal if there are not many of this messages)")
-        self.car = CarInherit(self.world, *self.track[0][1:4])
-   
+                #ORR
+       # self.car = CarInherit(self.world, *self.track[0][1:4])
+        self.car = CarInherit(self.world,0,5,0)
         return self.step(None)[0]
 
     def step(self, action):
@@ -403,7 +405,9 @@ class CarRacing(gym.Env, EzPickle):
 
         gl.glViewport(0, 0, VP_W, VP_H)
         t.enable()
-        self.render_road()
+       # self.render_road() #this function cratee our road , we need to change that to somthing more cool
+        self.forward_render_road()
+
         for geom in self.viewer.onetime_geoms:
             geom.render()
         self.viewer.onetime_geoms = []
@@ -425,6 +429,65 @@ class CarRacing(gym.Env, EzPickle):
         if self.viewer is not None:
             self.viewer.close()
             self.viewer = None
+
+
+
+    def forward_render_road(self):
+        gl.glBegin(gl.GL_QUADS)
+        gl.glColor4f(0.4, 0.8, 0.4, 1.0)
+        gl.glVertex3f(-PLAYFIELD, +PLAYFIELD, 0)
+        gl.glVertex3f(+PLAYFIELD, +PLAYFIELD, 0)
+        gl.glVertex3f(+PLAYFIELD, -PLAYFIELD, 0)
+        gl.glVertex3f(-PLAYFIELD, -PLAYFIELD, 0)
+        gl.glColor4f(0.4, 0.9, 0.4, 1.0)
+        k = PLAYFIELD/20.0
+        for x in range(-20, 20, 2):
+            for y in range(-20, 20, 2):
+                gl.glVertex3f(k*x + k, k*y + 0, 0)
+                gl.glVertex3f(k*x + 0, k*y + 0, 0)
+                gl.glVertex3f(k*x + 0, k*y + k, 0)
+                gl.glVertex3f(k*x + k, k*y + k, 0)
+        myList=[]
+        x=0
+        y=0        
+        for i in range(0,1000):
+            array=[(x,y),(x,y+15),(x+15,y+15),(x+15,y)]
+            y+=10
+            myList.append([array,[0.4,0.4,0.4]])
+
+        self.road_poly=myList    
+        for poly, color in myList:
+             gl.glColor4f(color[0], color[1], color[2], 1)
+             for p in poly:
+                 gl.glVertex3f(p[0], p[1], 0)
+           
+
+        # for poly, color in self.road_poly:
+        #     gl.glColor4f(color[0], color[1], color[2], 1)
+        #     for p in poly:
+        #         gl.glVertex3f(p[0], p[1], 0)
+
+
+        #ORR        
+        # data=[val[0] for val in self.road_poly if type(val[1])==list]
+        # inside=[info[0] for info in data]
+        # outside=[info[1] for info in data]
+        # for obj in inside:
+        #     gl.glColor4f(0, 0, 1,1)
+        #     gl.glVertex3f(obj[0]+0.5,obj[1]+ 0.5, 0)
+        #     gl.glVertex3f(obj[0]+0.5,obj[1]- 0.5, 0)
+        #     gl.glVertex3f(obj[0]-0.5,obj[1]+ 0.5, 0)
+        #     gl.glVertex3f(obj[0]-0.5,obj[1]- 0.5, 0)
+        # for obj in outside:
+        #     #rgb(255,255,0)
+        #     gl.glColor4f(1,1,0, 1)
+        #     gl.glVertex3f(obj[0]+0.5,obj[1]+ 0.5, 0)
+        #     gl.glVertex3f(obj[0]+0.5,obj[1]- 0.5, 0)
+        #     gl.glVertex3f(obj[0]-0.5,obj[1]+ 0.5, 0)
+        #     gl.glVertex3f(obj[0]-0.5,obj[1]- 0.5, 0)
+
+        gl.glEnd()
+
 
     def render_road(self):
         gl.glBegin(gl.GL_QUADS)
