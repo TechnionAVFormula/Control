@@ -1,7 +1,6 @@
 import sys, math
 import numpy as np
 
-
 import Box2D
 from Box2D.b2 import (edgeShape, circleShape, fixtureDef, polygonShape, revoluteJointDef, contactListener)
 from carinherit import CarInherit
@@ -330,7 +329,7 @@ class CarRacing(gym.Env, EzPickle):
             self.car.brake(action[2])
         
             
-        myDic=self.car.step(1.0/FPS)
+        self.car.step(1.0/FPS)
         self.world.Step(1.0/FPS, 6*30, 2*30)
         self.t += 1.0/FPS
 
@@ -352,7 +351,7 @@ class CarRacing(gym.Env, EzPickle):
                 done = True
                 step_reward = -100
 
-        return self.state, step_reward, done,myDic
+        return self.state, step_reward, done, {}
 
     def render(self, mode='human'):
         assert mode in ['human', 'state_pixels', 'rgb_array']

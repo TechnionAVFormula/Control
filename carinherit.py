@@ -12,10 +12,6 @@ class CarInherit(Car):
          Car.__init__(self, world, init_angle, init_x, init_y)
 
     def step(self, dt):
-        myDic={}
-        forwardSpeed=0
-        sideSpeed=0
-        routingSpeed=0
         for w in self.wheels:
             # Steer each wheel
             dir = np.sign(w.steer - w.joint.angle)
@@ -35,11 +31,9 @@ class CarInherit(Car):
             v = w.linearVelocity
             vf = forw[0]*v[0] + forw[1]*v[1]  # forward speed
             #print(vf)
-         #   print("the forward is:"+str(vf))
-            forwardSpeed+=vf
+            print("the forward is:"+str(vf))
             vs = side[0]*v[0] + side[1]*v[1]  # side speed
-            sideSpeed+=vs
-          #  print("the side is:"+str(vs))
+            print("the side is:"+str(vs))
 
             # WHEEL_MOMENT_OF_INERTIA*np.square(w.omega)/2 = E -- energy
             # WHEEL_MOMENT_OF_INERTIA*w.omega * domega/dt = dE/dt = W -- power
@@ -58,8 +52,6 @@ class CarInherit(Car):
             w.phase += w.omega*dt
 
             vr = w.omega*w.wheel_rad  # rotating wheel speed
-            routingSpeed+=vr
-
            # print(vr) GOOD
             f_force = -vf + vr        # force direction is direction of speed difference
             p_force = -vs
@@ -70,8 +62,8 @@ class CarInherit(Car):
             f_force *= 205000*SIZE*SIZE  # Random coefficient to cut oscillations in few steps (have no effect on friction_limit)
             p_force *= 205000*SIZE*SIZE
             force = np.sqrt(np.square(f_force) + np.square(p_force))
-           # print("force is"+str(abs(force)))
-            #print("friction_limit"+str(friction_limit))
+            print("force is"+str(abs(force)))
+            print("friction_limit"+str(friction_limit))
 
             # Skid trace
             if abs(force) > 2.0*friction_limit:
@@ -98,10 +90,6 @@ class CarInherit(Car):
             w.ApplyForceToCenter( (
                 p_force*side[0] + f_force*forw[0],
                 p_force*side[1] + f_force*forw[1]), True )
-        myDic["forwardSpeed"]=(forwardSpeed/4)
-        myDic["sideSpeed"]=(sideSpeed/4)
-        myDic["routingSpeed"]=(routingSpeed/4)
-        return myDic.copy()        
 
    
     
