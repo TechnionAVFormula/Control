@@ -14,6 +14,8 @@ class CarInherit(Car):
     def step(self, dt):
         dicInformation={}
         wheelsSpeed=[]
+        generalLimit=0
+        generalForce=0
         for w in self.wheels:
             # Steer each wheel
             dir = np.sign(w.steer - w.joint.angle)
@@ -64,13 +66,14 @@ class CarInherit(Car):
             f_force *= 205000*SIZE*SIZE  # Random coefficient to cut oscillations in few steps (have no effect on friction_limit)
             p_force *= 205000*SIZE*SIZE
             force = np.sqrt(np.square(f_force) + np.square(p_force))
-       #     print("force is"+str(abs(force)))
-       #     print("friction_limit"+str(friction_limit))
-
             # Skid trace
+            generalLimit=2.0*friction_limit
+            generalForce=abs(force)
             if abs(force) > 2.0*friction_limit:
                 if w.skid_particle and w.skid_particle.grass==grass and len(w.skid_particle.poly) < 30:
                     w.skid_particle.poly.append( (w.position[0], w.position[1]) )
+                  #  print("the w.skid_particle.poly"+str(len(w.skid_particle.poly)))
+    
                 elif w.skid_start is None:
                     w.skid_start = w.position
                 else:
@@ -103,10 +106,11 @@ class CarInherit(Car):
         avgForwardSpeed/=4
         avgSideSpeed/=4
         avgGeneralSpeed/=4
-
         dicInformation['avgForwardSpeed']=avgForwardSpeed
         dicInformation['avgSideSpeed']=avgSideSpeed
         dicInformation['avgGeneralSpeed']=avgGeneralSpeed
+        dicInformation['generalLimit']=generalLimit
+        dicInformation['generalForce']=generalForce
         return dicInformation.copy()
 
 #    def forward_speed():

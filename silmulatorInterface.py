@@ -7,9 +7,8 @@ import cv2
 from silmulator import *
 
 class SilmulatorInerface:
-    def __init__(self,num_of_episodes=10,num_of_steps=50,environment=""):
+    def __init__(self,num_of_episodes=10,num_of_steps=500,environment=""):
         self.environment=CarRacing()
-        #self.environment=gym.make('CarRacing-v0')        
         self.observation=self.environment.reset()
         self.numOfEpisodes=num_of_episodes
         self.numOfSteps=num_of_steps
@@ -18,6 +17,15 @@ class SilmulatorInerface:
         self.done=False
 
     def takeTheNextStep(self,action):
+        """take the next step, the value
+         Parameters
+        ----------
+        action : list 
+            [steer,gas,break]
+            steer- the values in range[-1 -left, 1 - right]   
+            gas-the values in range[0 - low, 1 - high]
+            brake-the values in range[0 - low, 1 - high]   
+        """
         self.environment.render()
         self.observation, self.reward, self.done, self.information = self.environment.step(action)
 
@@ -25,48 +33,49 @@ class SilmulatorInerface:
         return self.numOfSteps
 
     def getForwadSpeedWheelSpeed(self,wheel):           
-        #return the wheel's speed in array [forwadSpeed,sideSpeed,(foradSpeed**2+sideSpeed**2)**0.5]
+        """Return the forward wheel's speed of the car - the values in range [0,100]"""        
         return self.information["wheelsSpeed"][wheel][0]
 
-    def getSideSpeedWheelSpeed(self,wheel):           
-        #return the wheel's speed in array [forwadSpeed,sideSpeed,(foradSpeed**2+sideSpeed**2)**0.5]
+    def getSideSpeedWheelSpeed(self,wheel):
+
+        """Return the side wheel's speed of the car - the values in range [0,100]"""        
         return self.information["wheelsSpeed"][wheel][1]    
 
     def getAvgWheelSpeed(self,wheel):      
-         
-        #return the wheel's speed in array [foradSpeed,sideSpeed,(foradSpeed**2+sideSpeed**2)**0.5]
+        """Return the general wheel's speed of the car - the values in range [0,100]""" 
         return self.information["wheelsSpeed"][wheel][2]
 
-   
-    # def getAngle(self):
-    #     return self.information["angle"]
 
     def getAngularVelocity(self):
+        """Return the Velocity angles of the car - the values in range [-10-left,10-right]"""
         return self.information["angularVelocity"]
 
-    def getScore(self):
-        return  self.reward
+    def getSlide(self):
+        """Return the limit force and the force of the car
+        - if the car's force>limit force then the car may slip"""
+        return self.information['generalLimit'],self.information['generalForce']
 
-    # def getAvgGeneralSpeed(self):
-    #    return self.information["avgGeneralSpeed"]     
+
+    def getScore(self):
+        """Return the actual reward"""
+        return  self.reward 
 
     def getActualSpeed(self):
+        """Return the actual speed- the values in range [0 ,100]"""
         return self.information["actualSpeed"]    
 
     def getSteeringWheel(self):
+        """Return the steering wheel the values in range [-4.2 left,4.2 right]"""
         return self.information["steeringWheel"]    
 
 if __name__ == "__main__":
     print("yes!!!!")
     mySilmulator=SilmulatorInerface()
     for i in range(0,mySilmulator.getNumOfSteps()):
-        mySilmulator.takeTheNextStep([5,1000,0])
-        mySilmulator.takeTheNextStep([0,0,0])
-        print("the ActualSpeed is"+str(mySilmulator.getActualSpeed()))
+        mySilmulator.takeTheNextStep([1,0,0])
+     #   print("the getForwadSpeedWheelSpeed is"+str(mySilmulator.getForwadSpeedWheelSpeed(1)))
      #   print("the Averege Speed is"+str(mySilmulator.getAvgGeneralSpeed()))
-        print("the AvgWheelSpeed is"+str(mySilmulator.getAvgWheelSpeed(1)))
-
-
+        #print("the slide is"+str(mySilmulator.getSlide()))
       #  print("the angles is"+str(mySilmulator.getAngle()))
     pass
            

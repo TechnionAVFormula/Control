@@ -333,9 +333,10 @@ class CarRacing(gym.Env, EzPickle):
         informationDic=self.car.step(1.0/FPS)
         informationDic["angle"]=-self.car.hull.angle
         informationDic["angularVelocity"]=self.car.hull.angularVelocity
+     #   print("The angularVelocity is"+str(informationDic["angularVelocity"]))
         informationDic["steeringWheel"]=-10.0*self.car.wheels[0].joint.angle
         informationDic["actualSpeed"] = np.sqrt(np.square(self.car.hull.linearVelocity[0]) + np.square(self.car.hull.linearVelocity[1]))
-
+        print(informationDic["steeringWheel"])
         self.world.Step(1.0/FPS, 6*30, 2*30)
         self.t += 1.0/FPS
 
