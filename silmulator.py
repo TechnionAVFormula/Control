@@ -328,8 +328,14 @@ class CarRacing(gym.Env, EzPickle):
             self.car.gas(action[1])
             self.car.brake(action[2])
         
-            
-        self.car.step(1.0/FPS)
+        informationDic={}    
+        #ORR
+        informationDic=self.car.step(1.0/FPS)
+        informationDic["angle"]=-self.car.hull.angle
+        informationDic["angularVelocity"]=self.car.hull.angularVelocity
+        informationDic["steeringWheel"]=-10.0*self.car.wheels[0].joint.angle
+        informationDic["actualSpeed"] = np.sqrt(np.square(self.car.hull.linearVelocity[0]) + np.square(self.car.hull.linearVelocity[1]))
+
         self.world.Step(1.0/FPS, 6*30, 2*30)
         self.t += 1.0/FPS
 
@@ -351,7 +357,7 @@ class CarRacing(gym.Env, EzPickle):
                 done = True
                 step_reward = -100
 
-        return self.state, step_reward, done, {}
+        return self.state, step_reward, done,informationDic.copy()
 
     def render(self, mode='human'):
         assert mode in ['human', 'state_pixels', 'rgb_array']
@@ -371,6 +377,7 @@ class CarRacing(gym.Env, EzPickle):
         scroll_x = self.car.hull.position[0]
         scroll_y = self.car.hull.position[1]
         angle = -self.car.hull.angle
+      #  print("the angle is"+str(angle))
         vel = self.car.hull.linearVelocity
         if np.linalg.norm(vel) > 0.5:
             angle = math.atan2(vel[0], vel[1])
@@ -468,22 +475,22 @@ class CarRacing(gym.Env, EzPickle):
 
 
         #ORR        
-        # data=[val[0] for val in self.road_poly if type(val[1])==list]
-        # inside=[info[0] for info in data]
-        # outside=[info[1] for info in data]
-        # for obj in inside:
-        #     gl.glColor4f(0, 0, 1,1)
-        #     gl.glVertex3f(obj[0]+0.5,obj[1]+ 0.5, 0)
-        #     gl.glVertex3f(obj[0]+0.5,obj[1]- 0.5, 0)
-        #     gl.glVertex3f(obj[0]-0.5,obj[1]+ 0.5, 0)
-        #     gl.glVertex3f(obj[0]-0.5,obj[1]- 0.5, 0)
-        # for obj in outside:
-        #     #rgb(255,255,0)
-        #     gl.glColor4f(1,1,0, 1)
-        #     gl.glVertex3f(obj[0]+0.5,obj[1]+ 0.5, 0)
-        #     gl.glVertex3f(obj[0]+0.5,obj[1]- 0.5, 0)
-        #     gl.glVertex3f(obj[0]-0.5,obj[1]+ 0.5, 0)
-        #     gl.glVertex3f(obj[0]-0.5,obj[1]- 0.5, 0)
+        data=[val[0] for val in self.road_poly]
+        inside=[info[0] for info in data]
+        outside=[info[3] for info in data]
+        for obj in inside:
+             gl.glColor4f(0, 0, 1,1)
+             gl.glVertex3f(obj[0]+0.5,obj[1]+ 0.5, 0)
+             gl.glVertex3f(obj[0]+0.5,obj[1]- 0.5, 0)
+             gl.glVertex3f(obj[0]-0.5,obj[1]+ 0.5, 0)
+             gl.glVertex3f(obj[0]-0.5,obj[1]- 0.5, 0)
+        for obj in outside:
+             #rgb(255,255,0)
+             gl.glColor4f(1,1,0, 1)
+             gl.glVertex3f(obj[0]+0.5,obj[1]+ 0.5, 0)
+             gl.glVertex3f(obj[0]+0.5,obj[1]- 0.5, 0)
+             gl.glVertex3f(obj[0]-0.5,obj[1]+ 0.5, 0)
+             gl.glVertex3f(obj[0]-0.5,obj[1]- 0.5, 0)
 
         gl.glEnd()
 

@@ -12,9 +12,12 @@ class CarInherit(Car):
          Car.__init__(self, world, init_angle, init_x, init_y)
 
     def step(self, dt):
+        dicInformation={}
+        wheelsSpeed=[]
         for w in self.wheels:
             # Steer each wheel
             dir = np.sign(w.steer - w.joint.angle)
+           # print("the angle is"+w.joint.angle)
             val = abs(w.steer - w.joint.angle)
             w.joint.motorSpeed = dir*min(50.0*val, 3.0)
           
@@ -24,17 +27,16 @@ class CarInherit(Car):
             for tile in w.tiles:
                 friction_limit = max(friction_limit, FRICTION_LIMIT*tile.road_friction)
                 grass = False
-
             # Force
             forw = w.GetWorldVector( (0,1) )
             side = w.GetWorldVector( (1,0) )
             v = w.linearVelocity
             vf = forw[0]*v[0] + forw[1]*v[1]  # forward speed
             #print(vf)
-            print("the forward is:"+str(vf))
+         #   print("the forward is:"+str(vf))
             vs = side[0]*v[0] + side[1]*v[1]  # side speed
-            print("the side is:"+str(vs))
-
+         #   print("the side is:"+str(vs))
+            wheelsSpeed.append([vf,vs,(vf**2+vs**2)**0.5])
             # WHEEL_MOMENT_OF_INERTIA*np.square(w.omega)/2 = E -- energy
             # WHEEL_MOMENT_OF_INERTIA*w.omega * domega/dt = dE/dt = W -- power
             # domega = dt*W/WHEEL_MOMENT_OF_INERTIA/w.omega
@@ -62,8 +64,8 @@ class CarInherit(Car):
             f_force *= 205000*SIZE*SIZE  # Random coefficient to cut oscillations in few steps (have no effect on friction_limit)
             p_force *= 205000*SIZE*SIZE
             force = np.sqrt(np.square(f_force) + np.square(p_force))
-            print("force is"+str(abs(force)))
-            print("friction_limit"+str(friction_limit))
+       #     print("force is"+str(abs(force)))
+       #     print("friction_limit"+str(friction_limit))
 
             # Skid trace
             if abs(force) > 2.0*friction_limit:
@@ -90,10 +92,22 @@ class CarInherit(Car):
             w.ApplyForceToCenter( (
                 p_force*side[0] + f_force*forw[0],
                 p_force*side[1] + f_force*forw[1]), True )
+        dicInformation['wheelsSpeed']=wheelsSpeed
+        avgForwardSpeed=0
+        avgSideSpeed=0
+        avgGeneralSpeed=0
+        for w in wheelsSpeed:
+            avgForwardSpeed+=w[0]
+            avgSideSpeed+=w[1]
+            avgGeneralSpeed+=w[2]
+        avgForwardSpeed/=4
+        avgSideSpeed/=4
+        avgGeneralSpeed/=4
 
-   
-    
-
+        dicInformation['avgForwardSpeed']=avgForwardSpeed
+        dicInformation['avgSideSpeed']=avgSideSpeed
+        dicInformation['avgGeneralSpeed']=avgGeneralSpeed
+        return dicInformation.copy()
 
 #    def forward_speed():
    #     for w in self.wheels:
