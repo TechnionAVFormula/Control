@@ -9,7 +9,10 @@ FRICTION_LIMIT          = 1000000*SIZE*SIZE     # friction ~= mass ~= size^2 (ca
 class CarInherit(Car):
 
     def __init__(self, world, init_angle, init_x, init_y):
-         Car.__init__(self, world, init_angle, init_x, init_y)
+         Car.__init__(self, world, init_angle, 5, 30)
+         self.hull.linearVelocity[1]=100
+         self.omega=100
+         #self.phase=
 
     def step(self, dt):
         dicInformation={}
@@ -19,6 +22,7 @@ class CarInherit(Car):
         for w in self.wheels:
             # Steer each wheel
             dir = np.sign(w.steer - w.joint.angle)
+        
            # print("the angle is"+w.joint.angle)
             val = abs(w.steer - w.joint.angle)
             w.joint.motorSpeed = dir*min(50.0*val, 3.0)
@@ -111,6 +115,13 @@ class CarInherit(Car):
         dicInformation['avgGeneralSpeed']=avgGeneralSpeed
         dicInformation['generalLimit']=generalLimit
         dicInformation['generalForce']=generalForce
+        position=[0,0]
+        for w in self.wheels:
+            position[0]+=w.position[0]
+            position[1]+=w.position[1]
+        position[0]/=4
+        position[1]/=4
+        dicInformation["position"]=position
         return dicInformation.copy()
 
 #    def forward_speed():

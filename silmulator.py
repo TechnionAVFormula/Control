@@ -8,7 +8,6 @@ import gym
 from gym import spaces
 from gym.envs.box2d.car_dynamics import Car
 from gym.utils import colorize, seeding, EzPickle
-
 import pyglet
 from pyglet import gl
 import matplotlib.pyplot as plt
@@ -131,6 +130,7 @@ class CarRacing(gym.Env, EzPickle):
 
         self.action_space = spaces.Box( np.array([-1,0,0]), np.array([+1,+1,+1]), dtype=np.float32)  # steer, gas, brake
         self.observation_space = spaces.Box(low=0, high=255, shape=(STATE_H, STATE_W, 3), dtype=np.uint8)
+        self.center_vec=[]
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -321,7 +321,8 @@ class CarRacing(gym.Env, EzPickle):
        # self.car = CarInherit(self.world, *self.track[0][1:4])
         self.car = CarInherit(self.world,0,5,0)
         return self.step(None)[0]
-
+    def getCenterVec(self):
+        return self.center_vec.copy()
     def step(self, action):
         if action is not None:
             self.car.steer(-action[0])
@@ -336,7 +337,7 @@ class CarRacing(gym.Env, EzPickle):
      #   print("The angularVelocity is"+str(informationDic["angularVelocity"]))
         informationDic["steeringWheel"]=-10.0*self.car.wheels[0].joint.angle
         informationDic["actualSpeed"] = np.sqrt(np.square(self.car.hull.linearVelocity[0]) + np.square(self.car.hull.linearVelocity[1]))
-        print(informationDic["steeringWheel"])
+       # print(informationDic["steeringWheel"])
         self.world.Step(1.0/FPS, 6*30, 2*30)
         self.t += 1.0/FPS
 
@@ -459,8 +460,11 @@ class CarRacing(gym.Env, EzPickle):
         y=0        
         for i in range(0,1000):
             array=[(x,y),(x,y+15),(x+15,y+15),(x+15,y)]
-            y+=10
+            y+=15
             myList.append([array,[0.4,0.4,0.4]])
+            mid_X=(array[3][0]+array[0][0])/2
+            mid_Y=(array[3][1]+array[0][1])/2
+            self.center_vec.append([mid_X,mid_Y])
 
         self.road_poly=myList    
         for poly, color in myList:

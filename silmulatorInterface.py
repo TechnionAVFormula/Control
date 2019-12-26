@@ -5,9 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 from silmulator import *
-
+import time
 class SilmulatorInerface:
-    def __init__(self,num_of_episodes=10,num_of_steps=500,environment=""):
+    def __init__(self,num_of_episodes=10,num_of_steps=1000,environment=""):
         self.environment=CarRacing()
         self.observation=self.environment.reset()
         self.numOfEpisodes=num_of_episodes
@@ -15,6 +15,9 @@ class SilmulatorInerface:
         self.reward=0
         self.information={}
         self.done=False
+        self.f = open("state.log","a+")
+        self.f.write("State n. | Speed | Steer | Score | AngularSpeed | time \n")
+        self.f.close
 
     def takeTheNextStep(self,action):
         """take the next step, the value
@@ -26,9 +29,18 @@ class SilmulatorInerface:
             gas-the values in range[0 - low, 1 - high]
             brake-the values in range[0 - low, 1 - high]   
         """
+        start=time.time()
         self.environment.render()
         self.observation, self.reward, self.done, self.information = self.environment.step(action)
-
+        end=time.time()
+        self.f = open("state.log","a+")
+        self.f.write(str(i)+"    |"+str(mySilmulator.getActualSpeed())+
+        "   |" + str(mySilmulator.getSteeringWheel())+"   |"+
+        str(mySilmulator.getScore())+"  |"+str(mySilmulator.getAngularVelocity())
+        +"  |"+str(end-start)+"     \n")
+        self.f.close
+    def getCenterVec(self):
+        return self.environment.getCenterVec()
     def getNumOfSteps(self):
         return self.numOfSteps
 
@@ -66,13 +78,16 @@ class SilmulatorInerface:
 
     def getSteeringWheel(self):
         """Return the steering wheel the values in range [-4.2 left,4.2 right]"""
-        return self.information["steeringWheel"]    
+        return self.information["steeringWheel"]
+    def getPosition(self):
+        return self.information["position"]    
 
 if __name__ == "__main__":
-    print("yes!!!!")
     mySilmulator=SilmulatorInerface()
     for i in range(0,mySilmulator.getNumOfSteps()):
-        mySilmulator.takeTheNextStep([1,0,0])
+        mySilmulator.takeTheNextStep([0,0,0])
+        print(mySilmulator.getPosition())
+        #log insert
      #   print("the getForwadSpeedWheelSpeed is"+str(mySilmulator.getForwadSpeedWheelSpeed(1)))
      #   print("the Averege Speed is"+str(mySilmulator.getAvgGeneralSpeed()))
         #print("the slide is"+str(mySilmulator.getSlide()))
