@@ -14,7 +14,7 @@ class PurePursuitController:
         calculate_steering [double] -- [the requierd steering angle in radians to course correct]
     """    
 
-    def __init__(self, car_length=3, kdd=1, max_steering_angle=24, poly_fit_deg=3): # initializes the controller and sets the initial values
+    def __init__(self, car_length=3, kdd=1, max_steering_angle=24, poly_fit_deg=5): # initializes the controller and sets the initial values
         self._car_length = car_length
         self._kdd = kdd
         self._max_steering_angle = max_steering_angle*2*math.pi/360
@@ -34,10 +34,10 @@ class PurePursuitController:
 
     def calculate_steering(self): # calc the needed steering angle to course correct to the next waypoint
         look_ahead_point = self._calculate_look_ahead_point()
-
+        print(look_ahead_point)
         alpha = math.atan2(look_ahead_point[1] - self.coordinates[1], look_ahead_point[0] - self.coordinates[0]) - self.orientation # error angle
         delta = math.atan2(2*self._car_length*math.sin(alpha), self._point_distance(look_ahead_point))
-        return max(delta, -self._max_steering_angle) if (delta < 0) else min(delta, self._max_steering_angle)
+        return (max(delta, -self._max_steering_angle) if (delta < 0) else min(delta, self._max_steering_angle))/(2*math.pi/360)
 
     def _calculate_look_ahead_point(self):
         ld = self.velocity * self._kdd
@@ -64,7 +64,11 @@ class PurePursuitController:
             if (near_point_distance > way_point_distance):
                 near_point = way_point
                 near_point_distance = self._point_distance(near_point)
-        
+
+        f = open("stateNew.log","a+")
+        f.write( str(near_point)+"  |   " +str(near_point_distance)+ "  |"+str(self.coordinates)+ '\n')
+        f.close     
+        print(f'near point: {near_point}, near point distance: {near_point_distance}')
         return self.path.index(near_point)
 
     def _point_distance(self, point):

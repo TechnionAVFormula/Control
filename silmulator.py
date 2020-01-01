@@ -41,8 +41,8 @@ import matplotlib.pyplot as plt
 #
 # Created by Oleg Klimov. Licensed on the same terms as the rest of OpenAI Gym.
 
-STATE_W =960 #96  STATE_W_h =960 #96   # less than Atari 160x192
-STATE_H =960  # less than Atari 160x192
+STATE_W =1000#960 #96  STATE_W_h =960 #96   # less than Atari 160x192
+STATE_H =700#960  # less than Atari 160x192
 VIDEO_W =600 #600
 VIDEO_H =400 #400
 WINDOW_W =1000 #1000
@@ -464,7 +464,7 @@ class CarRacing(gym.Env, EzPickle):
             myList.append([array,[0.4,0.4,0.4]])
             mid_X=(array[3][0]+array[0][0])/2
             mid_Y=(array[3][1]+array[0][1])/2
-            self.center_vec.append([mid_X,mid_Y])
+            self.center_vec.append([mid_Y,mid_X])  # mid_X,mid_Y
 
         self.road_poly=myList    
         for poly, color in myList:

@@ -1,5 +1,6 @@
 import json
 import sys
+import os
 
 class PathPlanningAndControl:
 
@@ -7,7 +8,8 @@ class PathPlanningAndControl:
 
 	def __init__(self):
 		try:
-			with open('config.json', 'r') as f:
+			config_file_path = os.path.join(os.path.dirname(__file__), 'config.json')
+			with open(config_file_path, 'r') as f:
 				config = json.load(f)
 
 			module_name = config['module_name']

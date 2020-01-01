@@ -9,7 +9,7 @@ FRICTION_LIMIT          = 1000000*SIZE*SIZE     # friction ~= mass ~= size^2 (ca
 class CarInherit(Car):
 
     def __init__(self, world, init_angle, init_x, init_y):
-         Car.__init__(self, world, init_angle, 5, 30)
+         Car.__init__(self, world, init_angle, 5,30) #30
          self.hull.linearVelocity[1]=100
          self.omega=100
          #self.phase=
