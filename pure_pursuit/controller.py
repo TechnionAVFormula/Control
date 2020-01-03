@@ -34,7 +34,8 @@ class PurePursuitController:
 
     def calculate_steering(self): # calc the needed steering angle to course correct to the next waypoint
         look_ahead_point = self._calculate_look_ahead_point()
-        print(look_ahead_point)
+        # print(look_ahead_point)
+
         alpha = math.atan2(look_ahead_point[1] - self.coordinates[1], look_ahead_point[0] - self.coordinates[0]) - self.orientation # error angle
         delta = math.atan2(2*self._car_length*math.sin(alpha), self._point_distance(look_ahead_point))
         return (max(delta, -self._max_steering_angle) if (delta < 0) else min(delta, self._max_steering_angle))/(2*math.pi/360)
@@ -46,7 +47,7 @@ class PurePursuitController:
 
         swapped_axis_path = np.swapaxes(self.path[max(near_point_index-4, 0):min(near_point_index+4, len(self.path)-1)], 0 , 1)
         p = np.poly1d(np.polyfit(swapped_axis_path[0], swapped_axis_path[1], self._poly_fit_deg))
-
+        
         point_index = self._target_point_index(swapped_axis_path[0][near_point_index:], swapped_axis_path[1][near_point_index:], ld)
         
         x_sector = np.linspace(self.path[near_point_index+point_index-1][0], self.path[near_point_index+point_index][0], 5)
@@ -77,7 +78,9 @@ class PurePursuitController:
     def _target_point_index(self, x_vector, y_vector, distance):
         for point_index in range(len(x_vector)):
             if(self._point_distance([x_vector[point_index], y_vector[point_index]]) > distance):
-                return point_index
+                alpha = math.atan2(y_vector[point_index] - self.coordinates[1], x_vector[point_index] - self.coordinates[0]) - self.orientation
+                if(abs(alpha)<(math.pi/2)):   # making sure the chosen look ahead point is not behind the car
+                    return point_index
         return (len(x_vector)-1)
 
 
