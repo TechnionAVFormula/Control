@@ -59,12 +59,12 @@ class PurePursuitController:
         
         x_sector = np.linspace(self.path[near_point_index+point_index-1][0], self.path[near_point_index+point_index][0], 5)
         y_sector = np.polyval(p, x_sector)
-        
+
         point_index = self._target_point_index(x_sector, y_sector, ld)
         # t1 = x_sector[point_index]
         # t2 = y_sector[point_index]
         f = open("stateNew.log","a+")
-        f.write( str([x_sector[point_index], y_sector[point_index]]) + ' | ' + str(ld) + '\n')
+        f.write( str([x_sector[point_index], y_sector[point_index]]) + ' | ' + str(ld) + ' | ' + str(x_sector) + ' | ' + str(self.path[near_point_index]) + '\n')
         f.close     
 
         return [x_sector[point_index], y_sector[point_index]]
