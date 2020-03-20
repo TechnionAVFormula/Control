@@ -29,7 +29,7 @@ class State(NamedTuple):
     dist_to_end: float  # b
     speed: float  # b
 
-    def _convertToCarCoordinates(self, car_coordinates, ConusCoordinates):
+    def _convert_to_car_coordinates(self, car_coordinates, ConusCoordinates):
         return (ConusCoordinates[0] - car_coordinates[0],  # x axis
                 ConusCoordinates[1] - car_coordinates[1]  # y axis
                 )
@@ -38,11 +38,10 @@ class State(NamedTuple):
         self.x_t = self.x_t - self.pos[0]
         self.deviation = self.deviation + (1 / SAMPLING_RATE) * self.speed
         for l_cone in self.l_road_bound:
-            l_cone = self._convertToCarCoordinates(self.pos, l_cone)
+            l_cone = self._convert_to_car_coordinates(self.pos, l_cone)
         for r_cone in self.r_road_bound:
-            r_cone = self._convertToCarCoordinates(self.pos, r_cone)
+            r_cone = self._convert_to_car_coordinates(self.pos, r_cone)
         self.pos = np.array([0, 0])
-
 
     def compare(self, state: State) -> Tuple[bool, bool]:
         a_changed = self.deviation != state.deviation or self.x_t != state.x_t \
