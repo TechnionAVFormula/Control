@@ -10,18 +10,20 @@ class BasicController:
         self.action_planner = ActionPlanner(state=self.state)
 
     def _update_state(self, state: State):
+        state.abs_prev_pos = self.state.abs_pos
+        state.prev_angle = self.state.angle
         converted_state = state.convert_coord_sys()
         a_changed, b_changed = converted_state.compare(self.state)
         self.state = converted_state
 
         if a_changed:
             self.route_optimizer.update_optimal_route(self.state)
+            self.action_planner.pp_controller.update_path(self.route_optimizer.get_optimal_route(),self.state.speed)
         if b_changed:
             self.action_planner.update_action(self.state, self.route_optimizer.get_optimal_route())
 
     def main_loop(self):
 
-        # TODO: initial something something
         while True:
             # TODO: when to exit loop?
             in_msg = read_msg_from_q()

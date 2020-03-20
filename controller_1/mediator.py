@@ -28,6 +28,9 @@ class State(NamedTuple):
     is_course_complete: bool  # a
     dist_to_end: float  # b
     speed: float  # b
+    abs_pos: np.ndarray  # a+b
+    abs_prev_pos: np.ndarray  # a+b
+    prev_angle: float # a+b
 
     def _convert_to_car_coordinates(self, car_coordinates, ConusCoordinates):
         return (ConusCoordinates[0] - car_coordinates[0],  # x axis
