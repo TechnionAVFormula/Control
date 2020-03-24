@@ -15,7 +15,9 @@ class ActionPlanner:
 
     def update_action(self, state: State, p: np.ndarray):
         self.state = state
-        self.pp_controller.update_state(self.state.abs_pos[0]-self.state.abs_prev_pos[0],self.state.abs_pos[1]-self.state.abs_prev_pos[1],self.state.speed,self.state.angle-self.state.prev_angle)
+        self.pp_controller.update_state(self.state.abs_pos[0]-self.state.abs_prev_pos[0],
+                                        self.state.abs_pos[1]-self.state.abs_prev_pos[1],
+                                        self.state.speed,self.state.angle-self.state.prev_angle)
         self._calc_speed(p) 
         self._calc_wheel_ang(self.state)
 
@@ -23,9 +25,12 @@ class ActionPlanner:
         if self.state.dist_to_end == 0:
             self.new_wheel_angle = 0
         else:
-            self.new_wheel_angle = (max(-self._wheel_angle_upper_bound(state.speed, self.new_speed), self.pp_controller.calculate_steering()) if (self.pp_controller.calculate_steering() < 0) else min(self.pp_controller.calculate_steering(), self._wheel_angle_upper_bound(state.speed, self.new_speed)))
+            self.new_wheel_angle = (max(-self._wheel_angle_upper_bound(state.speed, self.new_speed),
+                                        self.pp_controller.calculate_steering())
+                                    if (self.pp_controller.calculate_steering() < 0)
+                                    else min(self.pp_controller.calculate_steering(),
+                                             self._wheel_angle_upper_bound(state.speed, self.new_speed)))
             
-
     def _calc_speed(self, p: np.ndarray):
         if self.state.dist_to_end < 0:
             self.new_speed = self._speed_upper_bound(p)
