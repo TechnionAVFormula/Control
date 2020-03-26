@@ -5,11 +5,15 @@ from route_optimizer import RouteOptimizer
 
 class BasicController:
     def __init__(self):
-        self.state: State = None  # TODO: maybe some other initial state?
+        self.state: State = None
         self.route_optimizer = RouteOptimizer(state=self.state)
         self.action_planner = ActionPlanner(state=self.state)
 
     def _update_state(self, state: State):
+
+        for cone in self.l_road_bound:
+            state.x_t = max(state.x_t, cone[0])
+        state.abs_pos = state.pos
         state.abs_prev_pos = self.state.abs_pos
         state.prev_angle = self.state.angle
         converted_state = state.convert_coord_sys()

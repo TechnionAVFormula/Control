@@ -87,7 +87,10 @@ if __name__ == '__main__':
                   deviation=0.3,
                   is_course_complete=False,
                   dist_to_end=-1,
-                  speed=1)
+                  speed=1,
+                  abs_pos=np.array([0, 0]),
+                  abs_prev_pos=np.array([0, 0]),
+                  prev_angle=0)
 
     ro = RouteOptimizer()
     ro.update_optimal_route(state)
