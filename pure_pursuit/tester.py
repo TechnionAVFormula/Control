@@ -1,4 +1,4 @@
-from purePursuit import PurePursuitController
+from controller import PurePursuitController
 import math
 import numpy as np
 from matplotlib import pyplot

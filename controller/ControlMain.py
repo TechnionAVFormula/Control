@@ -2,7 +2,7 @@ import signal
 
 from pyFormulaClientNoNvidia import messages
 
-from controller_1.controller import BasicController
+from controller.controller import BasicController
 from system_runner.system_runner_code.ControlClient import ControlClient
 
 
