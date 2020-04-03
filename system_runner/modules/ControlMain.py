@@ -1,9 +1,9 @@
 import signal
 
 from pyFormulaClientNoNvidia import messages
-
+# TODO: import path is probably going to change after integration into system runner
 from controller.controller import BasicController
-from system_runner.system_runner_code.ControlClient import ControlClient
+from system_runner.modules.ControlClient import ControlClient
 
 
 class Control:

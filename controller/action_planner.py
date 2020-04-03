@@ -1,5 +1,5 @@
 import numpy as np
-from pure_pursuit.pure_pursuit import PurePursuitController
+from pure_pursuit.purePursuit import PurePursuitController
 from .mediator import State
 
 V_MAX = 80
