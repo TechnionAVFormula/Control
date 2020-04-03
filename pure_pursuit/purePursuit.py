@@ -16,7 +16,7 @@ class PurePursuitController:
         calculate_steering [double] -- [the requierd steering angle in radians to course correct]
     """    
 
-    def __init__(self, car_length=3, kdd=3, max_steering_angle=24): # initializes the controller and sets the initial values
+    def __init__(self, car_length=3, kdd=2.8, max_steering_angle=24): # initializes the controller and sets the initial values
         self._car_length = car_length
         self._kdd = kdd
         self._max_steering_angle = max_steering_angle*2*math.pi/360
