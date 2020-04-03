@@ -6,7 +6,7 @@ from numpy import tan, abs, array, polyfit
 from scipy.integrate import quad
 from scipy.optimize import minimize
 
-from mediator import State
+from .mediator import State
 
 
 class RouteOptimizer:

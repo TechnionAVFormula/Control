@@ -1,6 +1,6 @@
-from action_planner import ActionPlanner
-from mediator import State, read_msg_from_q, write_msg_to_q, OutMsg
-from route_optimizer import RouteOptimizer
+from .action_planner import ActionPlanner
+from .mediator import State, OutMsg, control_state_from_est
+from .route_optimizer import RouteOptimizer
 
 
 class BasicController:
@@ -11,7 +11,7 @@ class BasicController:
 
     def _update_state(self, state: State):
 
-        for cone in self.l_road_bound:
+        for cone in state.l_road_bound:
             state.x_t = max(state.x_t, cone[0])
         state.abs_pos = state.pos
         state.abs_prev_pos = self.state.abs_pos
@@ -22,17 +22,14 @@ class BasicController:
 
         if a_changed:
             self.route_optimizer.update_optimal_route(self.state)
-            self.action_planner.pp_controller.update_path(self.route_optimizer.get_optimal_route(),self.state.speed)
+            self.action_planner.pp_controller.update_path(self.route_optimizer.get_optimal_route(), self.state.speed)
         if b_changed:
             self.action_planner.update_action(self.state, self.route_optimizer.get_optimal_route())
 
-    def main_loop(self):
+    def process_state_est(self, state_est):
+        state = control_state_from_est(state_est)
+        self._update_state(state)
 
-        while True:
-            # TODO: when to exit loop?
-            in_msg = read_msg_from_q()
-            state = in_msg.state
-            self._update_state(state)
-
-            out_msg = OutMsg(wheel_angle=self.action_planner.new_wheel_angle, speed=self.action_planner.new_speed)
-            write_msg_to_q(out_msg)
+        out_msg = OutMsg(wheel_angle=self.action_planner.new_wheel_angle, speed=self.action_planner.new_speed,
+                         gas=self.action_planner.new_gas, breaks=self.action_planner.new_breaks)
+        return out_msg

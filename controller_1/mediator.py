@@ -36,10 +36,11 @@ class State:
     speed: float  # b
     x_t: float = None  # a
     abs_pos: np.ndarray = None  # b
-    abs_prev_pos: np.ndarray = None # b
-    prev_angle: float = None # b
+    abs_prev_pos: np.ndarray = None  # b
+    prev_angle: float = None  # b
 
-    def _convert_to_car_coordinates(self, car_coordinates, conus_coordinates):
+    @staticmethod
+    def _convert_to_car_coordinates(car_coordinates, conus_coordinates):
         return (conus_coordinates[0] - car_coordinates[0],  # x axis
                 conus_coordinates[1] - car_coordinates[1]  # y axis
                 )
@@ -58,23 +59,33 @@ class State:
         a_changed = self.deviation != state.deviation or self.x_t != state.x_t \
                     or self.r_road_bound != state.r_road_bound or self.l_road_bound != state.l_road_bound \
                     or self.angle != state.angle or self.pos != state.pos or self.is_course_complete != state.is_course_complete
-        b_changed =  self.deviation != state.deviation or self.angle != state.angle or self.pos != state.pos \
+        b_changed = self.deviation != state.deviation or self.angle != state.angle or self.pos != state.pos \
                     or self.dist_to_end != state.dist_to_end or self.speed != state.speed
-        return a_changed,b_changed
-
-
-class InMsg(NamedTuple):
-    state: State  # TODO: depends on the system runner from here
+        return a_changed, b_changed
 
 
 class OutMsg(NamedTuple):
     wheel_angle: float
     speed: float
+    gas: float
+    breaks: float
 
 
-def read_msg_from_q() -> InMsg:
-    pass  # TODO: depends on the system runner from here
+def control_state_from_est(state_est):
+    deviation = state_est.deviation
+    r_road_bound = []
+    l_road_bound = []
+    for r_cone in state_est.right_bound_cones:
+        r_road_bound.append(np.array([r_cone.position.x, r_cone.position.y]))
+    for l_cone in state_est.left_bound_cones:
+        l_road_bound.append(np.array([l_cone.position.x, l_cone.position.y]))
 
+    angle = state_est.current_state.theta_absolute
+    pos = np.array(state_est.current_state.position.x, state_est.current_state.position.y)
+    is_course_complete = state_est.is_finished
+    dist_to_end = state_est.distance_to_finish
+    speed = np.sqrt(state_est.current_state.velocity.x ** 2 + state_est.current_state.velocity.y ** 2)
 
-def write_msg_to_q(out_msg: OutMsg):
-    pass  # TODO: depends on the system runner from here
+    return State(deviation=deviation, r_road_bound=np.array(r_road_bound), l_road_bound=np.array(l_road_bound),
+                 angle=angle, pos=pos, is_course_complete=is_course_complete, dist_to_end=dist_to_end,
+                 speed=speed)
