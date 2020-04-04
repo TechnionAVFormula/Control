@@ -72,7 +72,8 @@ class OutMsg(NamedTuple):
 
 
 def control_state_from_est(state_est):
-    deviation = state_est.deviation
+
+    deviation = 0.01
     r_road_bound = []
     l_road_bound = []
     for r_cone in state_est.right_bound_cones:
