@@ -1,4 +1,4 @@
-from __future__ import annotations
+# from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import NamedTuple, Tuple
@@ -45,7 +45,7 @@ class State:
                 conus_coordinates[1] - car_coordinates[1]  # y axis
                 )
 
-    def convert_coord_sys(self) -> State:
+    def convert_coord_sys(self):
         self.x_t = self.x_t - self.pos[0]
         self.deviation = self.deviation + (1 / SAMPLING_RATE) * self.speed
         for l_cone in self.l_road_bound:
@@ -55,7 +55,7 @@ class State:
         self.pos = np.array([0, 0])
         return self
 
-    def compare(self, state: State) -> Tuple[bool, bool]:
+    def compare(self, state):
         a_changed = self.deviation != state.deviation or self.x_t != state.x_t \
                     or self.r_road_bound != state.r_road_bound or self.l_road_bound != state.l_road_bound \
                     or self.angle != state.angle or self.pos != state.pos or self.is_course_complete != state.is_course_complete

@@ -1,5 +1,5 @@
 import signal
-
+import sys
 # from pyFormulaClientNoNvidia import messages
 from config import CONFIG, IN_MESSAGE_FILE, OUT_MESSAGE_FILE
 from config import ConfigEnum
@@ -15,6 +15,7 @@ elif CONFIG == ConfigEnum.LOCAL_TEST:
 else:
     raise NameError('User Should Choose Configuration from config.py')
 
+sys.path.append('/home/sahar/Programming/AV_Formula/systemrunner/modules/Control')
 # TODO: import path is probably going to change after integration into system runner
 from controller.controller import BasicController
 from system_runner.modules.ControlClient import ControlClient
