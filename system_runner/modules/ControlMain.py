@@ -28,7 +28,8 @@ class Control:
 
     def start(self):
         self._client.connect(1)
-        self._client.set_read_delay(0.05)  # Sets the delay between reading new messages from sensors.messages
+        if CONFIG == ConfigEnum.LOCAL_TEST:
+            self._client.set_read_delay(0.05)  # Sets the delay between reading new messages from sensors.messages
         self._client.start()
 
     def stop(self):
