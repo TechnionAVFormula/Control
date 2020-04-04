@@ -2,7 +2,7 @@ import numpy as np
 from pure_pursuit.purePursuit import PurePursuitController
 from .mediator import State
 
-V_MAX = 80
+V_MAX = 23  # in meter per sec
 A_MAX = 0.9
 DELTA_T = 0.2
 EPSILON = 0.001
@@ -21,6 +21,7 @@ class ActionPlanner:
 
     def update_action(self, state: State, p: np.ndarray):
         self.state = state
+        self.state.angle = self.state.angle*180/3.141
         self.pp_controller.update_state(self.state.abs_pos[0]-self.state.abs_prev_pos[0],
                                         self.state.abs_pos[1]-self.state.abs_prev_pos[1],
                                         self.state.speed,self.state.angle-self.state.prev_angle)
