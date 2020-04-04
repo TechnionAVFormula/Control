@@ -1,6 +1,20 @@
 import signal
 
-from pyFormulaClientNoNvidia import messages
+# from pyFormulaClientNoNvidia import messages
+from config import CONFIG, IN_MESSAGE_FILE, OUT_MESSAGE_FILE
+from config import ConfigEnum
+
+if CONFIG  == ConfigEnum.REAL_TIME or CONFIG == ConfigEnum.COGNATA_SIMULATION:
+    from pyFormulaClient import FormulaClient, messages
+    from pyFormulaClient.ModuleClient import ModuleClient
+    from pyFormulaClient.MessageDeque import MessageDeque
+elif CONFIG == ConfigEnum.LOCAL_TEST:
+    from pyFormulaClientNoNvidia import FormulaClient, messages
+    from pyFormulaClientNoNvidia.ModuleClient import ModuleClient
+    from pyFormulaClientNoNvidia.MessageDeque import MessageDeque
+else:
+    raise NameError('User Should Choose Configuration from config.py')
+
 # TODO: import path is probably going to change after integration into system runner
 from controller.controller import BasicController
 from system_runner.modules.ControlClient import ControlClient

@@ -19,7 +19,7 @@ else:
 
 class ControlClient(ModuleClient):
     def __init__(self, read_from_file, write_to_file):
-        if (CONFIG == ConfigEnum.REAL_TIME) or (CONFIG == ConfigEnum.COGNATA_SIMULATION):
+        if CONFIG == ConfigEnum.REAL_TIME or CONFIG == ConfigEnum.COGNATA_SIMULATION:
             super().__init__(FormulaClient.ClientSource.CONTROL)
         elif CONFIG == ConfigEnum.LOCAL_TEST:
             super().__init__(FormulaClient.ClientSource.STATE_EST, IN_MESSAGE_FILE, OUT_MESSAGE_FILE)
