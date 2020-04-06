@@ -10,7 +10,7 @@ from tests.system_runner_tests.utils import parse_file, print_file
 class Control:
     def __init__(self):
         # ControlClient reads messages from modules/state_est.messages and writes to modules/control.messages
-        self._client = ControlClient('messages/state_est.messages', 'messages/control.messages')
+        self._client = ControlClient('messages/state.messages', 'messages/control.messages')
         self._running_id = 1
         self.message_timeout = 0.01
         self._controller = BasicController()

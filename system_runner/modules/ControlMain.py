@@ -4,7 +4,7 @@ import signal
 from config import CONFIG, IN_MESSAGE_FILE, OUT_MESSAGE_FILE
 from config import ConfigEnum
 
-if CONFIG  == ConfigEnum.REAL_TIME or CONFIG == ConfigEnum.COGNATA_SIMULATION:
+if CONFIG == ConfigEnum.REAL_TIME or CONFIG == ConfigEnum.COGNATA_SIMULATION:
     from pyFormulaClient import FormulaClient, messages
     from pyFormulaClient.ModuleClient import ModuleClient
     from pyFormulaClient.MessageDeque import MessageDeque
