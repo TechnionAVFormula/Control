@@ -48,6 +48,13 @@ def main():
     formula_state.distance_to_finish = -1
     formula_state.is_finished = False
 
+<<<<<<< HEAD
+    formula_state.current_state.position.x = 0.1
+    formula_state.current_state.position.y = 0.1
+    formula_state.current_state.velocity.x = 22
+    formula_state.current_state.velocity.y = 0.1
+    formula_state.current_state.theta_absolute = 0.1
+=======
     car_state = messages.state_est.CarState()
     position = messages.common.Vector2D()
     position.x = 0
@@ -63,6 +70,7 @@ def main():
     
     formula_state.current_state = car_state
 
+>>>>>>> 912c0c233f8cba87891f02453e258e4a1439a54e
 
     # Create the message wrapper and save to file
     msg = messages.common.Message()
@@ -129,7 +137,7 @@ def main():
     # Create the message wrapper and save to file
     msg = messages.common.Message()
     msg.data.Pack(formula_state)
-    state_est_conn.send_message(msg)
+    # state_est_conn.send_message(msg)
 
     ##### test 5 ##### 
     _running_id = 1
@@ -309,7 +317,7 @@ def main():
     # Create the message wrapper and save to file
     msg = messages.common.Message()
     msg.data.Pack(formula_state)
-    state_est_conn.send_message(msg)
+    # state_est_conn.send_message(msg)
 
     exit_data = messages.server.ExitMessage()
     exit_msg = messages.common.Message()

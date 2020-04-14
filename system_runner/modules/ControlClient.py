@@ -1,7 +1,3 @@
-# from pyFormulaClientNoNvidia.ModuleClient import ModuleClient, ClientSource
-# from pyFormulaClientNoNvidia.MessageDeque import MessageDeque
-# from pyFormulaClientNoNvidia import messages
-
 from config import CONFIG, IN_MESSAGE_FILE, OUT_MESSAGE_FILE
 from config import ConfigEnum
 

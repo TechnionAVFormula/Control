@@ -62,7 +62,7 @@ class RouteOptimizer:
         partial_int_md = lambda p2, p3: quad(integrand_md, a=0, b=state.x_t, args=(p2, p3))
 
         # optimization target
-        if state.is_course_complete:
+        if state.finished_lap:
             target = lambda p: partial_int_rc(p[0], p[1])[0]
         else:
             target = lambda p: partial_int_rc(p[0], p[1])[0] + partial_int_md(p[0], p[1])[0]

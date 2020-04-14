@@ -1,18 +1,16 @@
 import signal
 import sys
-# from pyFormulaClientNoNvidia import messages
+
 from config import CONFIG
 from config import ConfigEnum
 
-if (CONFIG  == ConfigEnum.REAL_TIME) or (CONFIG == ConfigEnum.COGNATA_SIMULATION):
+if CONFIG  == ConfigEnum.REAL_TIME or CONFIG == ConfigEnum.COGNATA_SIMULATION:
     from pyFormulaClient import messages
-elif ( CONFIG == ConfigEnum.LOCAL_TEST):
+elif CONFIG == ConfigEnum.LOCAL_TEST:
     from pyFormulaClientNoNvidia import messages
 else:
     raise NameError('User Should Choose Configuration from config.py')
 
-
-sys.path.append('/home/sahar/Programming/AV_Formula/systemrunner/modules/Control')
 # TODO: import path is probably going to change after integration into system runner
 from controller.controller import BasicController
 from system_runner.modules.ControlClient import ControlClient
