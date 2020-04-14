@@ -8,22 +8,25 @@ class BasicController:
         self.state: State = None
         self.route_optimizer = RouteOptimizer(state=self.state)
         self.action_planner = ActionPlanner(state=self.state)
+        self.finished_lap = False
 
     def _update_state(self, state: State):
-
         for cone in state.l_road_bound:
             state.x_t = max(state.x_t, cone[0])
         state.abs_pos = state.pos
         state.abs_prev_pos = self.state.abs_pos
         state.prev_angle = self.state.angle
         converted_state = state.convert_coord_sys()
-        a_changed, b_changed = converted_state.compare(self.state)
         self.state = converted_state
 
-        if a_changed:
+        if state.messege_type == finished_lap:
+            self.finished_lap = True
+        state.finished_lap = self.finished_lap
+
+        if state.messege_type == prediction_and_correction:
             self.route_optimizer.update_optimal_route(self.state)
             self.action_planner.pp_controller.update_path(self.route_optimizer.get_optimal_route(), self.state.speed)
-        if b_changed:
+        if state.messege_type != finished_lap:
             self.action_planner.update_action(self.state, self.route_optimizer.get_optimal_route())
 
     def process_state_est(self, state_est):

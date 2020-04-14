@@ -1,17 +1,13 @@
 import signal
-
+import sys
 # from pyFormulaClientNoNvidia import messages
-from config import CONFIG, IN_MESSAGE_FILE, OUT_MESSAGE_FILE
+from config import CONFIG
 from config import ConfigEnum
 
-if CONFIG == ConfigEnum.REAL_TIME or CONFIG == ConfigEnum.COGNATA_SIMULATION:
-    from pyFormulaClient import FormulaClient, messages
-    from pyFormulaClient.ModuleClient import ModuleClient
-    from pyFormulaClient.MessageDeque import MessageDeque
-elif CONFIG == ConfigEnum.LOCAL_TEST:
-    from pyFormulaClientNoNvidia import FormulaClient, messages
-    from pyFormulaClientNoNvidia.ModuleClient import ModuleClient
-    from pyFormulaClientNoNvidia.MessageDeque import MessageDeque
+if (CONFIG  == ConfigEnum.REAL_TIME) or (CONFIG == ConfigEnum.COGNATA_SIMULATION):
+    from pyFormulaClient import messages
+elif ( CONFIG == ConfigEnum.LOCAL_TEST):
+    from pyFormulaClientNoNvidia import messages
 else:
     raise NameError('User Should Choose Configuration from config.py')
 
@@ -23,14 +19,15 @@ from system_runner.modules.ControlClient import ControlClient
 class Control:
     def __init__(self):
         # ControlClient reads messages from modules/state_est.messages and writes to modules/control.messages
-        self._client = ControlClient('modules/state_est.messages', 'modules/control.messages')
+        self._client = ControlClient()
         self._running_id = 1
         self.message_timeout = 0.01
         self._controller = BasicController()
 
     def start(self):
         self._client.connect(1)
-        self._client.set_read_delay(0.05)  # Sets the delay between reading new messages from sensors.messages
+        if CONFIG == ConfigEnum.LOCAL_TEST:
+            self._client.set_read_delay(0.05)  # Sets the delay between reading new messages from sensors.messages
         self._client.start()
 
     def stop(self):
