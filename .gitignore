@@ -1,0 +1,6 @@
+controller/__pycache__/
+pure_pursuit/__pycache__/
+system_runner/__pycache__/
+system_runner/modules/__pycache__/
+tests/system_runner_tests/__pycache__/
+tests/system_runner_tests/messages/state.messages
