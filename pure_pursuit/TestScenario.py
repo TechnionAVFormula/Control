@@ -86,12 +86,16 @@ def ScenarioCreator(NumberofSigments, UTurn, Road_Width, *Path):
 ##Attention!!! for Uturn 3 is the minimum!!
 NumberofSigments = 10
 ##defult easy path, yes for Uturn and spline for bend path.
-UTurn = ""
-Road_Width = 1.5
-BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(NumberofSigments, UTurn, Road_Width)
-plt.plot(BPath[0, :], BPath[1, :], "g")
-plt.plot(L_Cones_Line[0, :], L_Cones_Line[1, :], "or", label="Left Cones")
-plt.plot(R_Cones_Line[0, :], R_Cones_Line[1, :], "oy", label="Right Cones")
-plt.legend()
-plt.grid()
+UTurn = ["", "yes", "spline"]
+for i, mode in enumerate(UTurn):
+    Road_Width = 1.5
+    BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
+        NumberofSigments, mode, Road_Width
+    )
+    plt.subplot(3, 1, i + 1)
+    plt.plot(BPath[0, :], BPath[1, :], "g")
+    plt.plot(L_Cones_Line[0, :], L_Cones_Line[1, :], "or", label="Left Cones")
+    plt.plot(R_Cones_Line[0, :], R_Cones_Line[1, :], "oy", label="Right Cones")
+    plt.legend()
+    plt.grid()
 plt.show()
