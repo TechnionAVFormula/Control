@@ -1,0 +1,13 @@
+certifi==2019.11.28
+fastcache==1.1.0
+mkl-fft==1.0.15
+mkl-random==1.1.0
+mkl-service==2.3.0
+mpmath==1.1.0
+numpy==1.17.4
+protobuf==3.11.3
+pyFormulaClientNoNvidia==0.1.2
+scipy==1.3.2
+six==1.13.0
+sympy==1.5.1
+wincertstore==0.2
