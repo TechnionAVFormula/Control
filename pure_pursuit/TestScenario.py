@@ -1,26 +1,42 @@
 ##Path Scenario Creator
 import numpy as np
 import math as mat
-from numpy.random import randint
+from numpy.random import rand
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
 
 
-def ScenarioCreator(NumberofCones, NumberofUTurn, Road_Width, *Path):
-    if NumberofCones < NumberofUTurn * 3:
+def ScenarioCreator(NumberofSigments, UTurn, Road_Width, *Path):
+    if NumberofSigments < 3 * (UTurn == "yes"):
         return print("There are not enough cones!!!")
     if len(Path) == 0:
-        Path = randint(500, size=(2, NumberofCones + 2))
+        Path = np.empty([2, NumberofSigments * 4 + 2])
+        Path[:, 0] = np.zeros([2,])
+        vec = np.array([[5 / 4], [0]])
+        for i in range(1, NumberofSigments * 4):
+            if UTurn == "yes":
+                T = (
+                    rand(1) * mat.pi * 1 / NumberofSigments / 2
+                    - mat.pi * 1 / NumberofSigments / 16
+                )
+            elif UTurn == "spline":
+                T = (
+                    rand(1) * mat.pi * 1 / NumberofSigments * 2
+                    - mat.pi * 1 / NumberofSigments
+                )
+            else:
+                T = (
+                    rand(1) * mat.pi * 1 / NumberofSigments / 8
+                    - mat.pi * 1 / NumberofSigments / 16
+                )
+            R = np.array([[mat.cos(T), -mat.sin(T)], [mat.sin(T), mat.cos(T)]])
+            vec = R @ vec
+            Path[:, i] = vec.reshape([2,]) + Path[:, i - 1]
     else:
         Path = Path[0]
     L_Cones_Line = np.empty([1, 2])
     R_Cones_Line = np.empty([1, 2])
     BPath = np.empty([2, 1])
-    Ind = Path[0].argsort()
-    Path = Path[:, Ind]
-    for i in range(NumberofUTurn):
-        Ind = randint(Path.shape[1] - 1)
-        Path[:, [Ind - 1, Ind]] = Path[:, [Ind, Ind - 1]]
     R_perp = np.array([[0, -1], [1, 0]])
     Tval = np.linspace(0, 1, 10)
     Tval = np.array(
@@ -34,7 +50,7 @@ def ScenarioCreator(NumberofCones, NumberofUTurn, Road_Width, *Path):
     for i in range(0, Path.shape[1] - 4, 4):
         BPath = np.append(BPath, Path[:, i : i + 4] @ Tval, axis=1)
     BPath = BPath[:, 1:]
-    for i in range(1, BPath.shape[1]):
+    for i in range(1, BPath.shape[1], 10):
         L_Cones_Line = np.append(
             L_Cones_Line,
             np.array(
@@ -66,12 +82,10 @@ def ScenarioCreator(NumberofCones, NumberofUTurn, Road_Width, *Path):
     return BPath, L_Cones_Line, R_Cones_Line
 
 
-NumberofSigments = 5
-NumberofUTurn = 1
-Road_Width = 2
-BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
-    NumberofSigments, NumberofUTurn, Road_Width
-)
+NumberofSigments = 10
+UTurn = "no"
+Road_Width = 1.5
+BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(NumberofSigments, UTurn, Road_Width)
 plt.plot(BPath[0, :], BPath[1, :], "g")
 plt.plot(L_Cones_Line[0, :], L_Cones_Line[1, :], "or", label="Left Cones")
 plt.plot(R_Cones_Line[0, :], R_Cones_Line[1, :], "oy", label="Right Cones")
