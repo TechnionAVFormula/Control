@@ -84,11 +84,11 @@ def ScenarioCreator(NumberofSigments, UTurn, Road_Width, *Path):
 
 ##Choose number of Cones in the path
 ##Attention!!! for Uturn 3 is the minimum!!
-NumberofSigments = 10
+NumberofSigments = 6
 ##defult easy path, yes for Uturn and spline for bend path.
 UTurn = ["", "yes", "spline"]
 for i, mode in enumerate(UTurn):
-    Road_Width = 1.5
+    Road_Width = 2.5
     BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
         NumberofSigments, mode, Road_Width
     )

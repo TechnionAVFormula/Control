@@ -1,8 +1,12 @@
 from pyFormulaClientNoNvidia import messages
-from pyFormulaClientNoNvidia.FormulaClient import FormulaClient, ClientSource, SYSTEM_RUNNER_IPC_PORT
+from pyFormulaClientNoNvidia.FormulaClient import (
+    FormulaClient,
+    ClientSource,
+    SYSTEM_RUNNER_IPC_PORT,
+)
 
 from tests.system_runner_tests.utils import print_file, parse_file
-
+from tests.system_runner_tests.TestScenario import ScenarioCreator
 import math
 import os
 
@@ -31,8 +35,11 @@ def add_right_and_left_cones_to_state(r_cones, l_cones, formula_state):
 
 def main():
     # Establish the client:
-    state_est_client = FormulaClient(ClientSource.STATE_EST,
-                                     read_from_file=os.devnull, write_to_file='state_est.messages')
+    state_est_client = FormulaClient(
+        ClientSource.STATE_EST,
+        read_from_file=os.devnull,
+        write_to_file="state_est.messages",
+    )
     state_est_conn = state_est_client.connect(SYSTEM_RUNNER_IPC_PORT)
 
     ##### test 1 #####
@@ -48,29 +55,20 @@ def main():
     formula_state.distance_to_finish = -1
     formula_state.is_finished = False
 
-<<<<<<< HEAD
-    formula_state.current_state.position.x = 0.1
-    formula_state.current_state.position.y = 0.1
-    formula_state.current_state.velocity.x = 22
-    formula_state.current_state.velocity.y = 0.1
-    formula_state.current_state.theta_absolute = 0.1
-=======
     car_state = messages.state_est.CarState()
     position = messages.common.Vector2D()
-    position.x = 0
-    position.y = 0
+    position.x = 0.0000000000001
+    position.y = 0.0000000000001
     velocity = messages.common.Vector2D()
     velocity.x = 22
-    velocity.y = 0
-    car_state.theta = 0
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
     car_state.position = position
     car_state.velocity = velocity
-    car_state.theta_dot = 0
-    car_state.steering_angle = 0
-    
-    formula_state.current_state = car_state
+    car_state.theta_dot = 0.0000000000001
+    car_state.steering_angle = 0.0000000000001
 
->>>>>>> 912c0c233f8cba87891f02453e258e4a1439a54e
+    formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
     msg = messages.common.Message()
@@ -86,12 +84,11 @@ def main():
     position.y = 0
     velocity.x = 21.04
     velocity.y = 6.43
-    car_state.theta = 17*math.pi/180
+    car_state.theta = 17 * math.pi / 180
     car_state.position = position
     car_state.velocity = velocity
-    
-    formula_state.current_state = car_state
 
+    formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
     msg = messages.common.Message()
@@ -110,7 +107,7 @@ def main():
     car_state.theta = 0
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
@@ -127,19 +124,18 @@ def main():
     position.y = 1.2
     velocity.x = 20.67
     velocity.y = -7.52
-    car_state.theta = -math.pi/9
+    car_state.theta = -math.pi / 9
     car_state.position = position
     car_state.velocity = velocity
-    
-    formula_state.current_state = car_state
 
+    formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
     msg = messages.common.Message()
     msg.data.Pack(formula_state)
     # state_est_conn.send_message(msg)
 
-    ##### test 5 ##### 
+    ##### test 5 #####
     _running_id = 1
 
     l_cones = [[0, 10.25], [8.1, 8.6], [15, 4], [19.6, -2.9]]
@@ -155,7 +151,7 @@ def main():
     car_state.theta = 0
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
@@ -163,7 +159,7 @@ def main():
     msg.data.Pack(formula_state)
     state_est_conn.send_message(msg)
 
-    ##### test 6 ##### 
+    ##### test 6 #####
     _running_id = 1
 
     # Create state data
@@ -172,10 +168,10 @@ def main():
     position.y = 7.25
     velocity.x = 17.45
     velocity.y = -5.34
-    car_state.theta = -17*math.pi/180
+    car_state.theta = -17 * math.pi / 180
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
@@ -183,7 +179,7 @@ def main():
     msg.data.Pack(formula_state)
     state_est_conn.send_message(msg)
 
-    ##### test 7 ##### 
+    ##### test 7 #####
     _running_id = 1
 
     # Create state data
@@ -195,7 +191,7 @@ def main():
     car_state.theta = 0
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
@@ -203,7 +199,7 @@ def main():
     msg.data.Pack(formula_state)
     state_est_conn.send_message(msg)
 
-    ##### test 8 ##### 
+    ##### test 8 #####
     _running_id = 1
 
     # Create state data
@@ -212,16 +208,35 @@ def main():
     position.y = 8.6
     velocity.x = 15.975
     velocity.y = -5.814
-    car_state.theta = -math.pi/9
+    car_state.theta = -math.pi / 9
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
     msg = messages.common.Message()
     msg.data.Pack(formula_state)
     state_est_conn.send_message(msg)
+
+    ##### test 9 ##### poly
+    mode = [""]
+    NumberofSigments = 3
+    Road_Width = 2.5
+    BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
+        NumberofSigments, mode, Road_Width
+    )
+    ##### test 10 ##### poly
+    NumberofSigments = 4
+    BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
+        NumberofSigments, mode, Road_Width
+    )
+    ##### test 11 ##### poly
+    NumberofSigments = 5
+    BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
+        NumberofSigments, mode, Road_Width
+    )
+    ##### test 12 ##### poly
 
     ##### test 13 #####
     _running_id = 1
@@ -230,7 +245,7 @@ def main():
     r_cones = [[1, -2.8], [3.9, -2.5], [7, -2.8], [10.1, -2.3]]
     # Create state data
     add_right_and_left_cones_to_state(r_cones, l_cones, formula_state)
-    
+
     position.x = 1.5
     position.y = 0
     velocity.x = 0
@@ -238,13 +253,16 @@ def main():
     car_state.theta = math.pi
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
     msg = messages.common.Message()
     msg.data.Pack(formula_state)
     state_est_conn.send_message(msg)
+
+    ##### test 14 ##### UTurn
+    formula_state.distance_to_finish = -1
 
     ##### test 15 #####
     _running_id = 1
@@ -265,7 +283,7 @@ def main():
     car_state.theta = 0
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
@@ -284,18 +302,18 @@ def main():
     position.y = 0.3
     velocity.x = 14.141
     velocity.y = 16.853
-    car_state.theta = 5*math.pi/18
+    car_state.theta = 5 * math.pi / 18
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
     msg = messages.common.Message()
     msg.data.Pack(formula_state)
     state_est_conn.send_message(msg)
-    
-    ##### test 17 ##### 
+
+    ##### test 17 #####
     _running_id = 1
 
     l_cones = [[0, -26.25], [5.8, -25], [10.7, -21.8], [14.1, -16.8]]
@@ -308,10 +326,10 @@ def main():
     position.y = -29.25
     velocity.x = 10.99
     velocity.y = 12.206
-    car_state.theta = 4*math.pi/15
+    car_state.theta = 4 * math.pi / 15
     car_state.position = position
     car_state.velocity = velocity
-    
+
     formula_state.current_state = car_state
 
     # Create the message wrapper and save to file
@@ -325,7 +343,7 @@ def main():
     state_est_conn.send_message(exit_msg)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-    print_file('state_est.messages')
+    print_file("state_est.messages")
     # print(parse_file('state_est.messages'))
