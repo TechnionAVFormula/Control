@@ -80,8 +80,8 @@ def main():
 
     # Create state data
 
-    position.x = 0
-    position.y = 0
+    position.x = 0.0000000000001
+    position.y = 0.0000000000001
     velocity.x = 21.04
     velocity.y = 6.43
     car_state.theta = 17 * math.pi / 180
@@ -100,11 +100,11 @@ def main():
 
     # Create state data
 
-    position.x = 0
+    position.x = 0.0000000000001
     position.y = 1.2
     velocity.x = 22
-    velocity.y = 0
-    car_state.theta = 0
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
     car_state.position = position
     car_state.velocity = velocity
 
@@ -120,7 +120,7 @@ def main():
 
     # Create state data
 
-    position.x = 0
+    position.x = 0.0000000000001
     position.y = 1.2
     velocity.x = 20.67
     velocity.y = -7.52
@@ -138,8 +138,8 @@ def main():
     ##### test 5 #####
     _running_id = 1
 
-    l_cones = [[0, 10.25], [8.1, 8.6], [15, 4], [19.6, -2.9]]
-    r_cones = [[0, 4.25], [5.8, 3.1], [10.8, -0.2], [14.1, -5.2]]
+    l_cones = [[0.0000000000001, 10.25], [8.1, 8.6], [15, 4], [19.6, -2.9]]
+    r_cones = [[0.0000000000001, 4.25], [5.8, 3.1], [10.8, -0.2], [14.1, -5.2]]
 
     # Create state data
     add_right_and_left_cones_to_state(r_cones, l_cones, formula_state)
@@ -147,8 +147,8 @@ def main():
     position.x = -0.3
     position.y = 7.25
     velocity.x = 16.425
-    velocity.y = 0
-    car_state.theta = 0
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
     car_state.position = position
     car_state.velocity = velocity
 
@@ -187,8 +187,8 @@ def main():
     position.x = -0.3
     position.y = 8.6
     velocity.x = 16.425
-    velocity.y = 0
-    car_state.theta = 0
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
     car_state.position = position
     car_state.velocity = velocity
 
@@ -220,35 +220,147 @@ def main():
     state_est_conn.send_message(msg)
 
     ##### test 9 ##### poly
-    mode = [""]
+    _running_id = 1
+    mode = ["spline"]
     NumberofSigments = 3
     Road_Width = 2.5
     BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
         NumberofSigments, mode, Road_Width
     )
+    formula_state = messages.state_est.FormulaState()
+    add_right_and_left_cones_to_state(R_Cones_Line, L_Cones_Line, formula_state)
+
+    formula_state.distance_to_finish = -1
+    formula_state.is_finished = False
+
+    car_state = messages.state_est.CarState()
+    position = messages.common.Vector2D()
+    position.x = 0.0000000000001
+    position.y = 0.0000000000001
+    velocity = messages.common.Vector2D()
+    velocity.x = 22
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
+    car_state.position = position
+    car_state.velocity = velocity
+    car_state.theta_dot = 0.0000000000001
+    car_state.steering_angle = 0.0000000000001
+
+    formula_state.current_state = car_state
+
+    # Create the message wrapper and save to file
+    msg = messages.common.Message()
+    msg.data.Pack(formula_state)
+    state_est_conn.send_message(msg)
     ##### test 10 ##### poly
+    _running_id = 1
     NumberofSigments = 4
     BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
         NumberofSigments, mode, Road_Width
     )
+    L_Cones_Line = L_Cones_Line + 0.000001
+    R_Cones_Line = R_Cones_Line + 0.000001
+    formula_state = messages.state_est.FormulaState()
+    add_right_and_left_cones_to_state(R_Cones_Line, L_Cones_Line, formula_state)
+
+    formula_state.distance_to_finish = -1
+    formula_state.is_finished = False
+
+    car_state = messages.state_est.CarState()
+    position = messages.common.Vector2D()
+    position.x = 0.0000000000001
+    position.y = 0.0000000000001
+    velocity = messages.common.Vector2D()
+    velocity.x = 22
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
+    car_state.position = position
+    car_state.velocity = velocity
+    car_state.theta_dot = 0.0000000000001
+    car_state.steering_angle = 0.0000000000001
+
+    formula_state.current_state = car_state
+
+    # Create the message wrapper and save to file
+    msg = messages.common.Message()
+    msg.data.Pack(formula_state)
+    state_est_conn.send_message(msg)
     ##### test 11 ##### poly
+    _running_id = 1
     NumberofSigments = 5
     BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
         NumberofSigments, mode, Road_Width
     )
-    ##### test 12 ##### poly
+    L_Cones_Line = L_Cones_Line + 0.000001
+    R_Cones_Line = R_Cones_Line + 0.000001
+    formula_state = messages.state_est.FormulaState()
+    add_right_and_left_cones_to_state(R_Cones_Line, L_Cones_Line, formula_state)
 
+    formula_state.distance_to_finish = -1
+    formula_state.is_finished = False
+
+    car_state = messages.state_est.CarState()
+    position = messages.common.Vector2D()
+    position.x = 0.0000000000001
+    position.y = 0.0000000000001
+    velocity = messages.common.Vector2D()
+    velocity.x = 22
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
+    car_state.position = position
+    car_state.velocity = velocity
+    car_state.theta_dot = 0.0000000000001
+    car_state.steering_angle = 0.0000000000001
+
+    formula_state.current_state = car_state
+
+    # Create the message wrapper and save to file
+    msg = messages.common.Message()
+    msg.data.Pack(formula_state)
+    state_est_conn.send_message(msg)
+    ##### test 12 ##### poly
+    _running_id = 1
+    NumberofSigments = 6
+    BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
+        NumberofSigments, mode, Road_Width
+    )
+    L_Cones_Line = L_Cones_Line + 0.000001
+    R_Cones_Line = R_Cones_Line + 0.000001
+    formula_state = messages.state_est.FormulaState()
+    add_right_and_left_cones_to_state(R_Cones_Line, L_Cones_Line, formula_state)
+    formula_state.distance_to_finish = -1
+    formula_state.is_finished = False
+
+    car_state = messages.state_est.CarState()
+    position = messages.common.Vector2D()
+    position.x = 0.0000000000001
+    position.y = 0.0000000000001
+    velocity = messages.common.Vector2D()
+    velocity.x = 22
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
+    car_state.position = position
+    car_state.velocity = velocity
+    car_state.theta_dot = 0.0000000000001
+    car_state.steering_angle = 0.0000000000001
+
+    formula_state.current_state = car_state
+
+    # Create the message wrapper and save to file
+    msg = messages.common.Message()
+    msg.data.Pack(formula_state)
+    state_est_conn.send_message(msg)
     ##### test 13 #####
     _running_id = 1
 
     l_cones = [[1, 2.5], [4, 2.6], [6.8, 2.2], [10, 2.5]]
     r_cones = [[1, -2.8], [3.9, -2.5], [7, -2.8], [10.1, -2.3]]
     # Create state data
-    add_right_and_left_cones_to_state(r_cones, l_cones, formula_state)
+    add_right_and_left_cones_to_state(R_Cones_Line, L_Cones_Line, formula_state)
 
     position.x = 1.5
-    position.y = 0
-    velocity.x = 0
+    position.y = 0.0000000000001
+    velocity.x = 0.0000000000001
     velocity.y = 12
     car_state.theta = math.pi
     car_state.position = position
@@ -262,7 +374,38 @@ def main():
     state_est_conn.send_message(msg)
 
     ##### test 14 ##### UTurn
+    _running_id = 1
+    mode = ["yes"]
+    NumberofSigments = 3
+    Road_Width = 2.5
+    BPath, L_Cones_Line, R_Cones_Line = ScenarioCreator(
+        NumberofSigments, mode, Road_Width
+    )
+    formula_state = messages.state_est.FormulaState()
+    add_right_and_left_cones_to_state(R_Cones_Line, L_Cones_Line, formula_state)
+
     formula_state.distance_to_finish = -1
+    formula_state.is_finished = False
+
+    car_state = messages.state_est.CarState()
+    position = messages.common.Vector2D()
+    position.x = 0.0000000000001
+    position.y = 0.0000000000001
+    velocity = messages.common.Vector2D()
+    velocity.x = 22
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
+    car_state.position = position
+    car_state.velocity = velocity
+    car_state.theta_dot = 0.0000000000001
+    car_state.steering_angle = 0.0000000000001
+
+    formula_state.current_state = car_state
+
+    # Create the message wrapper and save to file
+    msg = messages.common.Message()
+    msg.data.Pack(formula_state)
+    state_est_conn.send_message(msg)
 
     ##### test 15 #####
     _running_id = 1
@@ -276,11 +419,11 @@ def main():
 
     formula_state.distance_to_finish = 6
 
-    position.x = 0
+    position.x = 0.0000000000001
     position.y = 0.4
     velocity.x = 20
-    velocity.y = 0
-    car_state.theta = 0
+    velocity.y = 0.0000000000001
+    car_state.theta = 0.0000000000001
     car_state.position = position
     car_state.velocity = velocity
 
@@ -298,7 +441,7 @@ def main():
 
     formula_state.distance_to_finish = -1
 
-    position.x = 0
+    position.x = 0.0000000000001
     position.y = 0.3
     velocity.x = 14.141
     velocity.y = 16.853

@@ -21,8 +21,8 @@ def ScenarioCreator(NumberofSigments, UTurn, Road_Width, *Path):
                 )
             elif UTurn == "spline":
                 T = (
-                    rand(1) * mat.pi * 1 / NumberofSigments * 2
-                    - mat.pi * 1 / NumberofSigments
+                    rand(1) * mat.pi * 1 / NumberofSigments / 2
+                    - mat.pi * 1 / NumberofSigments / 4
                 )
             else:
                 T = (
@@ -84,7 +84,7 @@ def ScenarioCreator(NumberofSigments, UTurn, Road_Width, *Path):
 
 ##Choose number of Cones in the path
 ##Attention!!! for Uturn 3 is the minimum!!
-NumberofSigments = 6
+NumberofSigments = 10
 ##defult easy path, yes for Uturn and spline for bend path.
 UTurn = ["", "yes", "spline"]
 for i, mode in enumerate(UTurn):
