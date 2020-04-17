@@ -17,9 +17,10 @@ def add_list_of_cones_to_state(cones, start_id, cones_state_container):
         state_cone.cone_id = start_id
         start_id += 1
         position = messages.common.Vector2D()
-        position.x = cone[0]
-        position.y = cone[1]
-        state_cone.position = position
+        # position.x = cone[0]
+        # position.y = cone[1]
+        state_cone.position.x = cone[0]
+        state_cone.position.y = cone[1]
         cones_state_container.append(state_cone)
 
 
@@ -53,7 +54,7 @@ def main():
     add_right_and_left_cones_to_state(r_cones, l_cones, formula_state)
 
     formula_state.distance_to_finish = -1
-    formula_state.is_finished = False
+    formula_state.is_finished_lap = False
 
     car_state = messages.state_est.CarState()
     position = messages.common.Vector2D()

@@ -11,8 +11,6 @@ class Order:
         self.Vx = 2
         self.Vy = 3
         self.Theta = 4
-        self.Vehicle_Total_Length = 1.535
-        self.Vehicle_Rear_Length = 0.7675
         self.Throttle = 0
         self.Steering = 1
 
@@ -20,6 +18,8 @@ class Order:
 class MPC(Order):
     def __init__(self, Time_Delta):
         super().__init__()
+        self.Vehicle_Total_Length = 1.535
+        self.Vehicle_Rear_Length = 0.7675
         self.State = []
         self.slip_angle = []
         self.Control_Command = []
@@ -94,6 +94,9 @@ class MPC(Order):
         # )
         pass
 
+
+##perpendicular distance from the poly
+##newton optimization
 
 ##optimal path function
 ##constraints

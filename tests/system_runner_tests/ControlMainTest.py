@@ -13,7 +13,7 @@ class Control:
         self._client = ControlClient(
             "messages/state.messages", "messages/control.messages"
         )
-        self._running_id = 1
+        self._running_id = 15
         self.message_timeout = 0.01
         self._controller = BasicController()
 
