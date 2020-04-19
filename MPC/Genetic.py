@@ -153,11 +153,13 @@ class DNA(Candidate):
             self.Candidate_List[i].relative_fitness = (
                 self.Candidate_List[i].fitness / self.Fitsum
             ) + val
-            val = val + self.Candidate_List[i].relative_fitness
+            val = self.Candidate_List[i].relative_fitness
         for _ in range(1, self.Number_of_Candidate):
             val = rand()
             j = 0
             while self.Candidate_List[j].relative_fitness < val:
+                print(self.Candidate_List[j].relative_fitness)
+                print(val)
                 j = j + 1
             self.Parent_List.append(self.Candidate_List[j])
 
