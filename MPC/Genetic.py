@@ -3,8 +3,7 @@ import math as mat
 import numpy as np
 import time
 from numpy.linalg import norm
-from numpy.random import randint
-
+from numpy.random import randint, rand
 
 ##resulotion = 1/(2^n-1)*range ---> the resulotion of the argument
 ##Generation ---> number of optimization iterations
@@ -16,6 +15,7 @@ from numpy.random import randint
 class Candidate:
     def __init__(self):
         self.fitness = []
+        self.relative_fitness = []
         self.Target_Value = []
         self.Generation = []
         self.Code = 0
@@ -26,10 +26,7 @@ class Candidate:
         return self.__Code
 
     @Code.setter
-    def Code(self, NumberofBits):
-        Code = []
-        for _ in range(NumberofBits):
-            Code.append(randint(2))
+    def Code(self, Code):
         self.__Code = np.asarray(Code)
 
 
@@ -48,6 +45,8 @@ class DNA(Candidate):
         self.Controlarguments = controlarguments
         self.argument_bits = []
         self.NumberofBits = 0
+        self.Fitsum = 0
+        self.Parent_List = []
 
     @property
     def Number_of_Candidate(self):
@@ -95,7 +94,7 @@ class DNA(Candidate):
     def Initialize_Population(self):
         for i in range(self.Number_of_Candidate):
             self.Candidate_List.append(Candidate())
-            self.Candidate_List[i].Code = self.NumberofBits
+            self.Candidate_List[i].Code = self.Code_init()
             self.Candidate_List[i].Value = self.Calculate_Value(
                 self.Candidate_List[i].Code,
                 self.Controlarguments,
@@ -104,7 +103,7 @@ class DNA(Candidate):
                 self.Val_min,
             )
             while not self.Constraint(self.Candidate_List[i].Value):
-                self.Candidate_List[i].Code = self.NumberofBits
+                self.Candidate_List[i].Code = self.Code_init()
                 self.Candidate_List[i].Value = self.Calculate_Value(
                     self.Candidate_List[i].Code,
                     self.Controlarguments,
@@ -113,28 +112,54 @@ class DNA(Candidate):
                     self.Val_min,
                 )
 
+    def Code_init(self):
+        Code = []
+        for _ in range(self.NumberofBits):
+            Code.append(randint(2))
+        return Code
+
     def DNA_fitness(self):
-        Min_value = 0
+        M_value = 0
+        Max = 0
         for i in range(self.Number_of_Candidate):
             self.Candidate_List[i].Target_Value = self.Calculate_Target(
                 self.Candidate_List[i].Value
             )
-            if i == 0 or Min_value > self.Candidate_List[i].Target_Value:
-                Min_value = self.Candidate_List[i].Target_Value
-        if Min_value < 0:
+            if i == 0 or M_value > self.Candidate_List[i].Target_Value:
+                M_value = self.Candidate_List[i].Target_Value
+        if M_value < 0:
             for i in range(self.Number_of_Candidate):
                 self.Candidate_List[i].fitness = 1 / (
-                    1 + self.Candidate_List[i].Target_Value - Min_value
+                    1 + self.Candidate_List[i].Target_Value - M_value
                 )
+                self.Fitsum = self.Fitsum + self.Candidate_List[i].fitness
+                if i == 0 or Max < self.Candidate_List[i].fitness:
+                    j = i
+                    Max = self.Candidate_List[i].fitness
         else:
             for i in range(self.Number_of_Candidate):
                 self.Candidate_List[i].fitness = 1 / (
                     1 + self.Candidate_List[i].Target_Value
                 )
+                self.Fitsum = self.Fitsum + self.Candidate_List[i].fitness
+                if i == 0 or Max < self.Candidate_List[i].fitness:
+                    j = i
+                    Max = self.Candidate_List[i].fitness
+        self.Parent_List.append(self.Candidate_List[j])
 
-    # def Up_date(self):
-    #     ProbList = np.array([])
-    #     for i in range(self.Number_of_Candidate):
+    def Up_date(self):
+        val = 0
+        for i in range(self.Number_of_Candidate):
+            self.Candidate_List[i].relative_fitness = (
+                self.Candidate_List[i].fitness / self.Fitsum
+            ) + val
+            val = val + self.Candidate_List[i].relative_fitness
+        for _ in range(1, self.Number_of_Candidate):
+            val = rand()
+            j = 0
+            while self.Candidate_List[j].relative_fitness < val:
+                j = j + 1
+            self.Parent_List.append(self.Candidate_List[j])
 
     @staticmethod
     def Calculate_Value(Code, Number_of_arguments, argument_bits, Resulotion, Val_min):
@@ -165,5 +190,7 @@ K = DNA(10, np.array([10, 2]), np.array([5, 1]), 1, 2)
 K.Calculate_NumberofBits()
 tic = time.time()
 K.Initialize_Population()
-print(time.time() - tic)
 K.DNA_fitness()
+K.Up_date()
+print(K.Parent_List[5].Code)
+print(time.time() - tic)
