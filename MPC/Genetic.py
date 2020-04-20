@@ -63,8 +63,10 @@ class DNA(Candidate):
 
     @NumberofBits.setter
     def NumberofBits(self, NumberofBits):
-
         self.__NumberofBits = NumberofBits
+
+    def initial_Parent_List(self):
+        self.Parent_List = np.zeros([self.Number_of_Candidate, self.NumberofBits])
 
     def Calculate_NumberofBits(self):
         for i in range(self.Controlarguments):
@@ -123,7 +125,6 @@ class DNA(Candidate):
         M_value = 0
         Max = 0
         self.Fitsum = 0
-        self.Parent_List = []
         for i in range(self.Number_of_Candidate):
             self.Candidate_List[i].Target_Value = self.Calculate_Target(
                 self.Candidate_List[i].Value
@@ -148,7 +149,7 @@ class DNA(Candidate):
                 if i == 0 or Max < self.Candidate_List[i].fitness:
                     j = i
                     Max = self.Candidate_List[i].fitness
-        self.Parent_List.append(copy.copy(self.Candidate_List[j]))
+        self.Parent_List[0] = self.Candidate_List[j].Code
 
     def Parent_Update(self):
         val = 0
@@ -157,15 +158,15 @@ class DNA(Candidate):
                 self.Candidate_List[i].fitness / self.Fitsum
             ) + val
             val = self.Candidate_List[i].relative_fitness
-        for _ in range(1, self.Number_of_Candidate):
+        for i in range(1, self.Number_of_Candidate):
             val = rand()
             j = 0
             while self.Candidate_List[j].relative_fitness < val:
                 j = j + 1
-            self.Parent_List.append(copy.copy(self.Candidate_List[j]))
+            self.Parent_List[i] = self.Candidate_List[j].Code
 
     def CroosoverandMutation(self):
-        self.Candidate_List[0].Code = copy.copy(self.Parent_List[0].Code)
+        self.Candidate_List[0].Code = self.Parent_List[0]
         self.Candidate_List[0].Value = self.Calculate_Value(
             self.Candidate_List[0].Code,
             self.Controlarguments,
@@ -180,8 +181,7 @@ class DNA(Candidate):
             if val < 7:
                 V = randint(np.sum(self.argument_bits))
                 self.Candidate_List[i].Code = np.concatenate(
-                    (self.Parent_List[num1].Code[:V], self.Parent_List[num2].Code[V:]),
-                    axis=None,
+                    (self.Parent_List[num1][:V], self.Parent_List[num2][V:]), axis=None,
                 )
                 self.Candidate_List[i].Value = self.Calculate_Value(
                     self.Candidate_List[i].Code,
@@ -193,10 +193,7 @@ class DNA(Candidate):
                 while not self.Constraint(self.Candidate_List[i].Value):
                     V = randint(np.sum(self.argument_bits))
                     self.Candidate_List[i].Code = np.concatenate(
-                        (
-                            self.Parent_List[num1].Code[:V],
-                            self.Parent_List[num2].Code[V:],
-                        ),
+                        (self.Parent_List[num1, :V], self.Parent_List[num2, V:],),
                         axis=None,
                     )
                     self.Candidate_List[i].Value = self.Calculate_Value(
@@ -208,7 +205,7 @@ class DNA(Candidate):
                     )
             else:
                 V = randint(np.sum(self.argument_bits))
-                self.Candidate_List[i] = self.Parent_List[num1]
+                self.Candidate_List[i].Code = self.Parent_List[num1]
                 if self.Candidate_List[i].Code[V]:
                     self.Candidate_List[i].Code[V] = 0
                 else:
@@ -253,7 +250,7 @@ class DNA(Candidate):
 
     @staticmethod
     def Constraint(Control_efforts):
-        if np.sum(Control_efforts) > 8:
+        if norm(Control_efforts) > 8:
             return 1
         else:
             return 0
@@ -263,19 +260,16 @@ class DNA(Candidate):
         return norm(Control_efforts) ** 2 + Control_efforts[1] ** 3
 
 
-K = DNA(100, np.array([100, 20]), np.array([0, 0]), 0.1, 2)
+K = DNA(100, np.array([100, 20, 50, 100]), np.array([0, 0, 0, 0]), 0.1, 4)
 K.Calculate_NumberofBits()
+K.initial_Parent_List()
 K.Initialize_Population()
 K.DNA_fitness()
-print(K.Parent_List[0].Code)
-print(K.Parent_List[0].Value)
 K.Parent_Update()
 print(K.argument_bits)
-print(K.Parent_List[0].Code)
-print(K.Parent_List[0].Value)
 print(K.Candidate_List[0].Target_Value)
 tic = time.time()
-for i in range(20):
+for i in range(150):
     K.CroosoverandMutation()
     K.DNA_fitness()
     K.Parent_Update()
