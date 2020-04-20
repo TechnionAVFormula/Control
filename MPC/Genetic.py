@@ -4,6 +4,7 @@ import numpy as np
 import time
 from numpy.linalg import norm
 from numpy.random import randint, rand
+import copy
 
 ##resulotion = 1/(2^n-1)*range ---> the resulotion of the argument
 ##Generation ---> number of optimization iterations
@@ -121,6 +122,8 @@ class DNA(Candidate):
     def DNA_fitness(self):
         M_value = 0
         Max = 0
+        self.Fitsum = 0
+        self.Parent_List = []
         for i in range(self.Number_of_Candidate):
             self.Candidate_List[i].Target_Value = self.Calculate_Target(
                 self.Candidate_List[i].Value
@@ -145,9 +148,9 @@ class DNA(Candidate):
                 if i == 0 or Max < self.Candidate_List[i].fitness:
                     j = i
                     Max = self.Candidate_List[i].fitness
-        self.Parent_List.append(self.Candidate_List[j])
+        self.Parent_List.append(copy.copy(self.Candidate_List[j]))
 
-    def Up_date(self):
+    def Parent_Update(self):
         val = 0
         for i in range(self.Number_of_Candidate):
             self.Candidate_List[i].relative_fitness = (
@@ -158,10 +161,82 @@ class DNA(Candidate):
             val = rand()
             j = 0
             while self.Candidate_List[j].relative_fitness < val:
-                print(self.Candidate_List[j].relative_fitness)
-                print(val)
                 j = j + 1
-            self.Parent_List.append(self.Candidate_List[j])
+            self.Parent_List.append(copy.copy(self.Candidate_List[j]))
+
+    def CroosoverandMutation(self):
+        self.Candidate_List[0].Code = copy.copy(self.Parent_List[0].Code)
+        self.Candidate_List[0].Value = self.Calculate_Value(
+            self.Candidate_List[0].Code,
+            self.Controlarguments,
+            self.argument_bits,
+            self.Resulotion,
+            self.Val_min,
+        )
+        for i in range(1, self.Number_of_Candidate):
+            val = randint(9)
+            num1 = int(randint(self.Number_of_Candidate))
+            num2 = int(randint(self.Number_of_Candidate))
+            if val < 7:
+                V = randint(np.sum(self.argument_bits))
+                self.Candidate_List[i].Code = np.concatenate(
+                    (self.Parent_List[num1].Code[:V], self.Parent_List[num2].Code[V:]),
+                    axis=None,
+                )
+                self.Candidate_List[i].Value = self.Calculate_Value(
+                    self.Candidate_List[i].Code,
+                    self.Controlarguments,
+                    self.argument_bits,
+                    self.Resulotion,
+                    self.Val_min,
+                )
+                while not self.Constraint(self.Candidate_List[i].Value):
+                    V = randint(np.sum(self.argument_bits))
+                    self.Candidate_List[i].Code = np.concatenate(
+                        (
+                            self.Parent_List[num1].Code[:V],
+                            self.Parent_List[num2].Code[V:],
+                        ),
+                        axis=None,
+                    )
+                    self.Candidate_List[i].Value = self.Calculate_Value(
+                        self.Candidate_List[i].Code,
+                        self.Controlarguments,
+                        self.argument_bits,
+                        self.Resulotion,
+                        self.Val_min,
+                    )
+            else:
+                V = randint(np.sum(self.argument_bits))
+                self.Candidate_List[i] = self.Parent_List[num1]
+                if self.Candidate_List[i].Code[V]:
+                    self.Candidate_List[i].Code[V] = 0
+                else:
+                    self.Candidate_List[i].Code[V] = 1
+                self.Candidate_List[i].Value = self.Calculate_Value(
+                    self.Candidate_List[i].Code,
+                    self.Controlarguments,
+                    self.argument_bits,
+                    self.Resulotion,
+                    self.Val_min,
+                )
+                while not self.Constraint(self.Candidate_List[i].Value):
+                    if self.Candidate_List[i].Code[V]:
+                        self.Candidate_List[i].Code[V] = 0
+                    else:
+                        self.Candidate_List[i].Code[V] = 1
+                    V = randint(np.sum(self.argument_bits))
+                    if self.Candidate_List[i].Code[V]:
+                        self.Candidate_List[i].Code[V] = 0
+                    else:
+                        self.Candidate_List[i].Code[V] = 1
+                    self.Candidate_List[i].Value = self.Calculate_Value(
+                        self.Candidate_List[i].Code,
+                        self.Controlarguments,
+                        self.argument_bits,
+                        self.Resulotion,
+                        self.Val_min,
+                    )
 
     @staticmethod
     def Calculate_Value(Code, Number_of_arguments, argument_bits, Resulotion, Val_min):
@@ -173,7 +248,7 @@ class DNA(Candidate):
                 Value[i] = Value[i] + Code[j] * Multi
                 Multi = Multi / 2
             Running = Running + argument_bits[i]
-            Value[i] = (Value[i] - 1) * Resulotion[i] + Val_min[i]
+            Value[i] = (Value[i]) * Resulotion[i] + Val_min[i]
         return Value
 
     @staticmethod
@@ -185,14 +260,27 @@ class DNA(Candidate):
 
     @staticmethod
     def Calculate_Target(Control_efforts):
-        return norm(Control_efforts)
+        return norm(Control_efforts) ** 2 + Control_efforts[1] ** 3
 
 
-K = DNA(10, np.array([10, 2]), np.array([5, 1]), 1, 2)
+K = DNA(100, np.array([100, 20]), np.array([0, 0]), 0.1, 2)
 K.Calculate_NumberofBits()
-tic = time.time()
 K.Initialize_Population()
 K.DNA_fitness()
-K.Up_date()
-print(K.Parent_List[5].Code)
+print(K.Parent_List[0].Code)
+print(K.Parent_List[0].Value)
+K.Parent_Update()
+print(K.argument_bits)
+print(K.Parent_List[0].Code)
+print(K.Parent_List[0].Value)
+print(K.Candidate_List[0].Target_Value)
+tic = time.time()
+for i in range(20):
+    K.CroosoverandMutation()
+    K.DNA_fitness()
+    K.Parent_Update()
+K.CroosoverandMutation()
+print(K.Candidate_List[0].Code)
+print(K.Candidate_List[0].Value)
+print(K.Candidate_List[0].Target_Value)
 print(time.time() - tic)
