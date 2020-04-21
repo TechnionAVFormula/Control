@@ -4,7 +4,7 @@ import numpy as np
 import time
 from numpy.linalg import norm
 from numpy.random import randint, rand
-import copy
+
 
 ##resulotion = 1/(2^n-1)*range ---> the resulotion of the argument
 ##Generation ---> number of optimization iterations
@@ -260,21 +260,21 @@ class DNA(Candidate):
         return norm(Control_efforts) ** 2 + Control_efforts[1] ** 3
 
 
-K = DNA(100, np.array([100, 20, 50, 100]), np.array([0, 0, 0, 0]), 0.1, 4)
-K.Calculate_NumberofBits()
-K.initial_Parent_List()
-K.Initialize_Population()
-K.DNA_fitness()
-K.Parent_Update()
-print(K.argument_bits)
-print(K.Candidate_List[0].Target_Value)
-tic = time.time()
-for i in range(150):
-    K.CroosoverandMutation()
-    K.DNA_fitness()
-    K.Parent_Update()
-K.CroosoverandMutation()
-print(K.Candidate_List[0].Code)
-print(K.Candidate_List[0].Value)
-print(K.Candidate_List[0].Target_Value)
-print(time.time() - tic)
+# K = DNA(100, np.array([100, 20, 50, 100]), np.array([0, 0, 0, 0]), 0.1, 4)
+# K.Calculate_NumberofBits()
+# K.initial_Parent_List()
+# K.Initialize_Population()
+# K.DNA_fitness()
+# K.Parent_Update()
+# print(K.argument_bits)
+# print(K.Candidate_List[0].Target_Value)
+# tic = time.time()
+# for i in range(10):
+#     K.CroosoverandMutation()
+#     K.DNA_fitness()
+#     K.Parent_Update()
+# K.CroosoverandMutation()
+# print(K.Candidate_List[0].Code)
+# print(K.Candidate_List[0].Value)
+# print(K.Candidate_List[0].Target_Value)
+# print(time.time() - tic)
