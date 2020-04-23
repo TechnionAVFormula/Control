@@ -166,6 +166,7 @@ class DNA(Candidate):
             self.Parent_List[i] = self.Candidate_List[j].Code
 
     def CroosoverandMutation(self):
+        # TODO: ID Check
         self.Candidate_List[0].Code = self.Parent_List[0]
         self.Candidate_List[0].Value = self.Calculate_Value(
             self.Candidate_List[0].Code,
@@ -191,7 +192,7 @@ class DNA(Candidate):
                     self.Val_min,
                 )
                 while not self.Constraint(self.Candidate_List[i].Value):
-                    V = randint(np.sum(self.argument_bits))
+                    V = randint(self.NumberofBits)
                     self.Candidate_List[i].Code = np.concatenate(
                         (self.Parent_List[num1, :V], self.Parent_List[num2, V:],),
                         axis=None,
@@ -248,16 +249,16 @@ class DNA(Candidate):
             Value[i] = (Value[i]) * Resulotion[i] + Val_min[i]
         return Value
 
-    @staticmethod
-    def Constraint(Control_efforts):
-        if norm(Control_efforts) > 8:
-            return 1
-        else:
-            return 0
+    # @staticmethod
+    # def Constraint(Control_efforts):
+    #     if norm(Control_efforts) > 8:
+    #         return 1
+    #     else:
+    #         return 0
 
-    @staticmethod
-    def Calculate_Target(Control_efforts):
-        return norm(Control_efforts) ** 2 + Control_efforts[1] ** 3
+    # @staticmethod
+    # def Calculate_Target(Control_efforts):
+    #     return norm(Control_efforts) ** 2 + Control_efforts[1] ** 3
 
 
 # K = DNA(100, np.array([100, 20, 50, 100]), np.array([0, 0, 0, 0]), 0.1, 4)

@@ -35,10 +35,9 @@ class MPC(Order, DNA):
         super(Order, self).__init__(
             Number_of_Candidate, Val_max, Val_min, resulotion, controlarguments
         )
-        self.Initial_Position = Initial_Position
         self.Vehicle_Total_Length = 1.535
         self.Vehicle_Rear_Length = 0.7675
-        self.Horizon = 0
+        self.Horizon = 2
         self.slip_angle = np.array([])
         self.Control_Command = np.array([])
         self.Rotational_Speed = np.array([])
@@ -46,7 +45,8 @@ class MPC(Order, DNA):
         self.Target_Path = np.array([])
         self.Orthogonal_error = np.array([])
         self.Optimal_path = Optimal_path
-        self.Predicted_State = np.array([])
+        self.State = Initial_Position
+        self.Predicted_State = np.empty([5, self.Horizon])
         self.Tanget_Angle = Optimal_path
         self.Weights = Weights
         self.Path_center = Path_center
@@ -77,62 +77,74 @@ class MPC(Order, DNA):
     def Tanget_Angle(self, Predicted_path):
         Tanget_Angle = np.zeros([self.Horizon, 1])
         Tanget_Angle[0] = mat.atan2(
-            Predicted_path[0, 1] - self.Initial_Position[self.Y],
-            Predicted_path[0, 0] - self.Initial_Position[self.X],
+            Predicted_path[0, 1] - self.State[self.Y],
+            Predicted_path[0, 0] - self.State[self.X],
         )
         for i in range(1, self.Horizon):
-            Tanget_Angle[i] = mat.atan2(
-                Predicted_path[i, 1] - Predicted_path[i - 1, 1],
-                Predicted_path[i, 0] - Predicted_path[i - 1, 0],
+            Tanget_Angle[i] = mat.pi - mat.atan2(
+                Predicted_path[1, i] - Predicted_path[1, i - 1],
+                Predicted_path[0, i] - Predicted_path[0, i - 1],
             )
         self.__Tanget_Angle = Tanget_Angle
 
-    def Kinematic_Model(self):
+    def Kinematic_Model(self, Control_Command):
         # Calculate the absolute velocity
         V_abs = norm(self.State[[self.Vx, self.Vy]])
         # Calculate The slip angle maybe take it from state!!!
         self.Slip_angle = mat.atan2(
-            mat.tan(self.Control_Command[self.Steering]) * self.Vehicle_Rear_Length,
+            mat.tan(Control_Command[self.Steering]) * self.Vehicle_Rear_Length,
             self.Vehicle_Total_Length,
         )
         # Calculate the rotational speed maybe take it from state!!!
         self.Rotational_Speed = (
             V_abs
             * mat.cos(self.Slip_angle)
-            * mat.tan(self.Control_Command[self.Steering])
+            * mat.tan(Control_Command[self.Steering])
             / self.Vehicle_Total_Length
         )
         # Calculate the process advancement
         advancement = np.array(
             [
-                self.Time_Delta * self.State[self.Vx]
-                + (self.Time_Delta ** 2)
-                / 2
-                * mat.cos(self.State[self.Theta] + self.Slip_angle)
-                * self.Control_Command[self.Throttle],
-                self.Time_Delta * self.State[self.Vy]
-                + (self.Time_Delta ** 2)
-                / 2
-                * mat.sin(self.State[self.Theta] + self.Slip_angle)
-                * self.Control_Command[self.Throttle],
-                self.Time_Delta
-                * mat.cos(self.State[self.Steering] + self.Slip_angle)
-                * self.Control_Command[self.Throttle],
-                self.Time_Delta
-                * mat.sin(self.State[self.Theta] + self.Slip_angle)
-                * self.Control_Command[self.Throttle],
-                self.Time_Delta * self.Rotational_Speed,
+                [
+                    self.Time_Delta * self.State[self.Vx]
+                    + (self.Time_Delta ** 2)
+                    / 2
+                    * mat.cos(self.State[self.Theta] + self.Slip_angle)
+                    * Control_Command[self.Throttle]
+                ],
+                [
+                    self.Time_Delta * self.State[self.Vy]
+                    + (self.Time_Delta ** 2)
+                    / 2
+                    * mat.sin(self.State[self.Theta] + self.Slip_angle)
+                    * Control_Command[self.Throttle]
+                ],
+                [
+                    self.Time_Delta
+                    * mat.cos(self.State[self.Steering] + self.Slip_angle)
+                    * Control_Command[self.Throttle]
+                ],
+                [
+                    self.Time_Delta
+                    * mat.sin(self.State[self.Theta] + self.Slip_angle)
+                    * Control_Command[self.Throttle]
+                ],
+                [self.Time_Delta * self.Rotational_Speed],
             ],
             dtype="float",
         )
         # Update the state
         self.State = self.State + advancement
 
-    def Target_function(self):
+    def Calculate_Target(self, Control_Command):
         Ec = 0.0
         El = 0.0
         Du = 0.0
+        self.Control_Command = Control_Command.reshape(
+            [int(len(Control_Command) / 2), 2]
+        )
         for i in range(self.Horizon):
+            # TODO: change angle calculation to polynomial dervitive from future point
             Ec += self.Weights[0] * (
                 mat.sin(self.Tanget_Angle[i])
                 * (self.Predicted_State[self.X, i] - self.Optimal_path[self.X, i])
@@ -146,21 +158,29 @@ class MPC(Order, DNA):
                 * (self.Predicted_State[self.Y, i] - self.Optimal_path[self.Y, i])
             )
             Du += self.Weights[4] * (
-                self.Control_Command[0, i + 1] - self.Control_Command[0, i]
+                self.Control_Command[i + 1, 0] - self.Control_Command[i, 0]
             ) + self.Weights[5] * (
-                self.Control_Command[1, i + 1] - self.Control_Command[1, i]
+                self.Control_Command[i + 1, 1] - self.Control_Command[i, 1]
             )
         self.Cost = (
-            Ec
-            + El
-            + Du
+            Ec ** 2
+            + El ** 2
+            + Du ** 2
             + self.Weights[3]
-            * np.dot(self.Control_Command[0, :], self.Control_Command[0, :])
+            * np.dot(self.Control_Command[:, 0], self.Control_Command[:, 0])
             + self.Weights[4]
-            * np.dot(self.Control_Command[1, :], self.Control_Command[1, :])
+            * np.dot(self.Control_Command[:, 0], self.Control_Command[:, 1])
         )
+        return self.Cost
 
-    def Constraint_function(self):
+    def Constraint(self, Control_Command):
+        self.Control_Command = Control_Command.reshape(
+            [int(len(Control_Command) / 2), 2]
+        )
+        self.State = np.zeros([5, 1])
+        for i in range(self.Horizon):
+            self.Kinematic_Model(self.Control_Command[i, :])
+            self.Predicted_State[:, i : i + 1] = self.State
         for i in range(self.Horizon):
             if (
                 ((self.Predicted_State[self.X, i] - self.Path_center[self.X, i]) ** 2)
@@ -175,18 +195,18 @@ Rmax = 0.5
 Initial_Position = np.zeros([5, 1])
 # Optimal_path = ......!!
 # For first running we will check Path_center = Optimal_path
-# Optimal_path = [1, 1]
-# Path_center = Optimal_path
-Weights = np.ones([5, 1])
+Optimal_path = np.array([[5, 10, 15, 20], [5, 10, 15, 20]])
+Path_center = Optimal_path
+Weights = np.ones([6, 1])
 Time_Delta = 1
 ##Genetic initialization
 Number_of_Candidate = 100
 # control efforts
-Val_max = np.array([4, 4])
-val_min = np.array([-2, -2])
-resulotion = 0.1
+Val_max = np.array([4, mat.pi / 4, 4, mat.pi / 4, 4, mat.pi / 4])
+val_min = np.array([-2, -mat.pi / 4, -2, -mat.pi / 4, -2, -mat.pi / 4])
+resulotion = 0.01
 # control arguments gas and steering
-contorlarguments = 2
+contorlarguments = 6
 
 K = MPC(
     Number_of_Candidate,
@@ -201,6 +221,42 @@ K = MPC(
     Weights,
     Time_Delta,
 )
+K.Calculate_NumberofBits()
+K.initial_Parent_List()
+K.Initialize_Population()
+K.DNA_fitness()
+print(K.Candidate_List[0].Target_Value)
+K.Parent_Update()
+print(K.argument_bits)
+K.CroosoverandMutation()
+K.DNA_fitness()
+K.Parent_Update()
+print(K.Candidate_List[0].Target_Value)
+K.CroosoverandMutation()
+K.DNA_fitness()
+K.Parent_Update()
+print(K.Candidate_List[0].Target_Value)
+print(K.Candidate_List[0].Value)
+K.CroosoverandMutation()
+K.DNA_fitness()
+K.Parent_Update()
+print(K.Candidate_List[0].Target_Value)
+print(K.Candidate_List[0].Value)
+K.CroosoverandMutation()
+K.DNA_fitness()
+K.Parent_Update()
+print(K.Candidate_List[0].Target_Value)
+print(K.Candidate_List[0].Value)
+K.CroosoverandMutation()
+K.DNA_fitness()
+K.Parent_Update()
+print(K.Candidate_List[0].Target_Value)
+print(K.Candidate_List[0].Value)
+K.CroosoverandMutation()
+K.DNA_fitness()
+K.Parent_Update()
+print(K.Candidate_List[0].Target_Value)
+print(K.Candidate_List[0].Value)
 # K = DNA(100, np.array([4, 4]), np.array([-2, -2]), 0.1, 2)
 # K.Calculate_NumberofBits()
 # K.initial_Parent_List()
