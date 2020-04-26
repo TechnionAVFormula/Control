@@ -4,6 +4,7 @@ import numpy as np
 import time
 from numpy.linalg import norm
 from numpy.random import randint, rand
+from MPCMain import MPC, Order
 
 
 ##resulotion = 1/(2^n-1)*range ---> the resulotion of the argument
@@ -33,7 +34,7 @@ class Candidate:
 
 class DNA(Candidate):
     def __init__(
-        self, Number_of_Candidate, Val_max, Val_min, resulotion, controlarguments
+        self, Number_of_Candidate, Val_max, Val_min, resulotion, controlarguments,
     ):
         super().__init__()
         self.iteration = 0
@@ -261,21 +262,34 @@ class DNA(Candidate):
     #     return norm(Control_efforts) ** 2 + Control_efforts[1] ** 3
 
 
-# K = DNA(100, np.array([100, 20, 50, 100]), np.array([0, 0, 0, 0]), 0.1, 4)
-# K.Calculate_NumberofBits()
-# K.initial_Parent_List()
-# K.Initialize_Population()
-# K.DNA_fitness()
-# K.Parent_Update()
-# print(K.argument_bits)
-# print(K.Candidate_List[0].Target_Value)
-# tic = time.time()
-# for i in range(10):
-#     K.CroosoverandMutation()
-#     K.DNA_fitness()
-#     K.Parent_Update()
-# K.CroosoverandMutation()
-# print(K.Candidate_List[0].Code)
-# print(K.Candidate_List[0].Value)
-# print(K.Candidate_List[0].Target_Value)
-# print(time.time() - tic)
+##RunningFunciton
+Rmax = 0.5
+Initial_Position = np.zeros([5, 1])
+# Optimal_path = ......!!
+# For first running we will check Path_center = Optimal_path
+Optimal_path = np.array([[5, 10, 15, 20], [5, 10, 15, 20]])
+Path_center = Optimal_path
+Weights = np.ones([6, 1])
+Time_Delta = 1
+##Genetic initialization
+Number_of_Candidate = 10
+# control efforts
+Val_max = np.array([4, mat.pi / 4, 4, mat.pi / 4, 4, mat.pi / 4])
+Val_min = np.array([-2, -mat.pi / 4, -2, -mat.pi / 4, -2, -mat.pi / 4])
+resulotion = 0.01
+# control arguments gas and steering
+controlarguments = 6
+
+K = DNA(Number_of_Candidate, Val_max, Val_min, resulotion, controlarguments,)
+K2 = MPC(Rmax, Initial_Position, Optimal_path, Path_center, Weights, Time_Delta)
+K.Calculate_NumberofBits()
+K.initial_Parent_List()
+K.Initialize_Population()
+K.DNA_fitness()
+K.CroosoverandMutation()
+for i in range(100):
+    print(K.Candidate_List[0].Target_Value)
+    print(K.Candidate_List[0].Value)
+    K.DNA_fitness()
+    K.Parent_Update()
+    K.CroosoverandMutation()

@@ -2,7 +2,6 @@
 import math as mat
 import numpy as np
 from numpy.linalg import norm
-from Genetic import Candidate, DNA
 
 ##Cost function
 class Order:
@@ -16,25 +15,11 @@ class Order:
         self.Steering = int(1)
 
 
-class MPC(Order, DNA):
+class MPC(Order):
     def __init__(
-        self,
-        Number_of_Candidate,
-        Val_max,
-        Val_min,
-        resulotion,
-        controlarguments,
-        Rmax,
-        Initial_Position,
-        Optimal_path,
-        Path_center,
-        Weights,
-        Time_Delta,
+        self, Rmax, Initial_Position, Optimal_path, Path_center, Weights, Time_Delta,
     ):
         super().__init__()
-        super(Order, self).__init__(
-            Number_of_Candidate, Val_max, Val_min, resulotion, controlarguments
-        )
         self.Vehicle_Total_Length = 1.535
         self.Vehicle_Rear_Length = 0.7675
         self.Horizon = 2
@@ -189,74 +174,30 @@ class MPC(Order, DNA):
                 return 0
         return 1
 
+    def optimize(self, Initial_state):
+        # TODO: call engine for optimize. Initial_state from state estimation return optimal control vector.
+        pass
+
 
 ##RunningFunciton
-Rmax = 0.5
-Initial_Position = np.zeros([5, 1])
-# Optimal_path = ......!!
-# For first running we will check Path_center = Optimal_path
-Optimal_path = np.array([[5, 10, 15, 20], [5, 10, 15, 20]])
-Path_center = Optimal_path
-Weights = np.ones([6, 1])
-Time_Delta = 1
-##Genetic initialization
-Number_of_Candidate = 100
-# control efforts
-Val_max = np.array([4, mat.pi / 4, 4, mat.pi / 4, 4, mat.pi / 4])
-val_min = np.array([-2, -mat.pi / 4, -2, -mat.pi / 4, -2, -mat.pi / 4])
-resulotion = 0.01
-# control arguments gas and steering
-contorlarguments = 6
+# Rmax = 0.5
+# Initial_Position = np.zeros([5, 1])
+# # Optimal_path = ......!!
+# # For first running we will check Path_center = Optimal_path
+# Optimal_path = np.array([[5, 10, 15, 20], [5, 10, 15, 20]])
+# Path_center = Optimal_path
+# Weights = np.ones([6, 1])
+# Time_Delta = 1
+# ##Genetic initialization
+# Number_of_Candidate = 10
+# # control efforts
+# Val_max = np.array([4, mat.pi / 4, 4, mat.pi / 4, 4, mat.pi / 4])
+# val_min = np.array([-2, -mat.pi / 4, -2, -mat.pi / 4, -2, -mat.pi / 4])
+# resulotion = 0.01
+# # control arguments gas and steering
+# contorlarguments = 6
 
-K = MPC(
-    Number_of_Candidate,
-    Val_max,
-    val_min,
-    resulotion,
-    contorlarguments,
-    Rmax,
-    Initial_Position,
-    Optimal_path,
-    Path_center,
-    Weights,
-    Time_Delta,
-)
-K.Calculate_NumberofBits()
-K.initial_Parent_List()
-K.Initialize_Population()
-K.DNA_fitness()
-print(K.Candidate_List[0].Target_Value)
-K.Parent_Update()
-print(K.argument_bits)
-K.CroosoverandMutation()
-K.DNA_fitness()
-K.Parent_Update()
-print(K.Candidate_List[0].Target_Value)
-K.CroosoverandMutation()
-K.DNA_fitness()
-K.Parent_Update()
-print(K.Candidate_List[0].Target_Value)
-print(K.Candidate_List[0].Value)
-K.CroosoverandMutation()
-K.DNA_fitness()
-K.Parent_Update()
-print(K.Candidate_List[0].Target_Value)
-print(K.Candidate_List[0].Value)
-K.CroosoverandMutation()
-K.DNA_fitness()
-K.Parent_Update()
-print(K.Candidate_List[0].Target_Value)
-print(K.Candidate_List[0].Value)
-K.CroosoverandMutation()
-K.DNA_fitness()
-K.Parent_Update()
-print(K.Candidate_List[0].Target_Value)
-print(K.Candidate_List[0].Value)
-K.CroosoverandMutation()
-K.DNA_fitness()
-K.Parent_Update()
-print(K.Candidate_List[0].Target_Value)
-print(K.Candidate_List[0].Value)
+
 # K = DNA(100, np.array([4, 4]), np.array([-2, -2]), 0.1, 2)
 # K.Calculate_NumberofBits()
 # K.initial_Parent_List()
