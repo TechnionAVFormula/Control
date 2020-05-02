@@ -12,7 +12,7 @@ else:
     raise NameError('User Should Choose Configuration from config.py')
 
 # TODO: import path is probably going to change after integration into system runner
-from controller.controller import BasicController
+from system_runner.modules.controller.controller import BasicController
 from system_runner.modules.ControlClient import ControlClient
 
 
