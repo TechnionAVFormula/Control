@@ -31,10 +31,10 @@ class BasicController:
             self.action_planner.update_action(self.state, self.route_optimizer.get_optimal_route())
 
     def process_state_est(self, state_est, time):
-        if self.first_message_time == 0
+        if self.first_message_time == 0:
             self.first_message_time = time
-        if time - self.first_message_time < 1500 
-            out_msg(0,0,0,0)
+        if time - self.first_message_time < 1500: 
+            out_msg = OutMsg(0,0,0,0)
             return out_msg
 
         state = control_state_from_est(state_est)
