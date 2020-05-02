@@ -42,7 +42,9 @@ class Control:
         driving_instructions = messages.control.DriveInstructions()
 
         # Insert algorithms
-        out_msg = self._controller.process_state_est(formula_state)
+        time = formula_state_msg.header.timestamp.ToMilliseconds()
+        
+        out_msg = self._controller.process_state_est(formula_state, time)
         driving_instructions.gas = out_msg.gas
         driving_instructions.breaks = out_msg.breaks
         driving_instructions.steering = out_msg.wheel_angle

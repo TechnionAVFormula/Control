@@ -9,6 +9,7 @@ class BasicController:
         self.route_optimizer = RouteOptimizer(state=self.state)
         self.action_planner = ActionPlanner(state=self.state)
         self.finished_lap = False
+        self.first_message_time = 0
 
     def _update_state(self, state: State):
         for cone in state.l_road_bound:
@@ -29,7 +30,13 @@ class BasicController:
         if state.messege_type != finished_lap:
             self.action_planner.update_action(self.state, self.route_optimizer.get_optimal_route())
 
-    def process_state_est(self, state_est):
+    def process_state_est(self, state_est, time):
+        if self.first_message_time == 0
+            self.first_message_time = time
+        if time - self.first_message_time < 1500 
+            out_msg(0,0,0,0)
+            return out_msg
+
         state = control_state_from_est(state_est)
         self._update_state(state)
 
