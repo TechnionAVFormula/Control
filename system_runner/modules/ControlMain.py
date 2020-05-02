@@ -46,8 +46,7 @@ class Control:
         driving_instructions.gas = out_msg.gas
         driving_instructions.breaks = out_msg.breaks
         driving_instructions.steering = out_msg.wheel_angle
-        # TODO: add speed to protocol
-        # driving_instructions.speed = out_msg.speed
+        driving_instructions.speed = out_msg.speed
 
         return driving_instructions
 
