@@ -24,6 +24,8 @@ class Constants:
     COEFF_B="coeff_B"
     COEFF_C="coeff_C"
     COEFF_D="coeff_D"
+    GAS="gas"
+    BREAK="break"
     POLYNOMIAL_A_COEFF_a = "polynomial_A_coeef_a"
     POLYNOMIAL_A_COEFF_b = "polynomial_A_coeef_b"
     POLYNOMIAL_A_COEFF_c = "polynomial_A_coeef_c"
@@ -39,6 +41,9 @@ class Constants:
     POLYNOMIAL_A = "polynomial_A"
     POLYNOMIAL_B = "polynomial_B"
     POLYNOMIAL_C = "polynomial_C"
+    Cones = "cones"
+    Cones_X = "cones_x"
+    Cones_Y = "cones_y"
 
 
 #    POLYNOMIAL_B_ = "polynomial_b"
@@ -55,6 +60,8 @@ class Dash:
         actual_speed = state[Constants.ACTUAL_SPEED]
         desirable_speed = state[Constants.DESIRABLE_SPEED]
         actual_steering = state[Constants.ACTUAL_STEERING]
+        gas = state[Constants.GAS]
+        breaks= state[Constants.BREAK]
         desirable_steering = state[Constants.DESIRABLE_STEERING]
         polynomial_a = state[Constants.POLYNOMIAL_A]
         polynomial_b = state[Constants.POLYNOMIAL_B]
@@ -71,7 +78,8 @@ class Dash:
         polynomial_c_coeef_b = polynomial_c[Constants.COEFF_B]
         polynomial_c_coeef_c = polynomial_c[Constants.COEFF_C]
         polynomial_c_coeef_d = polynomial_c[Constants.COEFF_D]
-
+        cones_x = state[Constants.Cones][Constants.Cones_X]
+        cones_y = state[Constants.Cones][Constants.Cones_Y]
         polynomial_b = state[Constants.POLYNOMIAL_B]
         polynomial_c = state[Constants.POLYNOMIAL_C]
         time = state[Constants.TIME]
@@ -145,9 +153,9 @@ class Dash:
 
         # functions
 
-        Calculate=lambda A,B,C,D,X : A*(X**3)+B*(X**2)+C*(X)+D
+        Calculate=lambda A,B,C,D,Y : A*(Y**3)+B*(Y**2)+C*(Y)+D
 
-        X_range =np.arange(-15,25,0.5)
+        Y_range =np.arange(-15,25,0.5)
 
         #polynomial_a_coeef_a = polynomial_a[Constants.COEFF_A]
         #polynomial_a_coeef_b = polynomial_a[Constants.COEFF_B]
@@ -161,20 +169,55 @@ class Dash:
         #polynomial_c_coeef_b = polynomial_c[Constants.COEFF_B]
         #polynomial_c_coeef_c = polynomial_c[Constants.COEFF_C]
         #polynomial_c_coeef_d = polynomial_c[Constants.COEFF_D]
-        Y_1_range= [Calculate(polynomial_a_coeef_a,polynomial_a_coeef_b,
-                              polynomial_a_coeef_c,polynomial_a_coeef_d,x) for x in X_range]
-        Y_2_range = [Calculate(polynomial_b_coeef_a, polynomial_b_coeef_b,
-                               polynomial_b_coeef_c, polynomial_b_coeef_d, x) for x in X_range]
-        Y_3_range = [Calculate(polynomial_c_coeef_a, polynomial_c_coeef_b,
-                               polynomial_c_coeef_c, polynomial_c_coeef_d, x) for x in X_range]
+        X_1_range= [Calculate(polynomial_a_coeef_a,polynomial_a_coeef_b,
+                              polynomial_a_coeef_c,polynomial_a_coeef_d,y) for y in Y_range]
+        X_2_range = [Calculate(polynomial_b_coeef_a, polynomial_b_coeef_b,
+                               polynomial_b_coeef_c, polynomial_b_coeef_d, y) for y in Y_range]
+        X_3_range = [Calculate(polynomial_c_coeef_a, polynomial_c_coeef_b,
+                               polynomial_c_coeef_c, polynomial_c_coeef_d, y) for y in Y_range]
         self.constrants_fig = go.Figure()
-        self.constrants_fig.add_trace(go.Scatter(x=X_range,
-                                                 y=Y_1_range,name = "polynomial a"))
 
-        self.constrants_fig.add_trace(go.Scatter(x=X_range,
-                                                     y=Y_2_range, name="polynomial b"))
-        self.constrants_fig.add_trace(go.Scatter(x=X_range,
-                                                 y=Y_3_range, name="polynomial c"))
+
+
+
+        self.constrants_fig.add_trace(go.Scatter(x=Y_range,
+                                                 y=X_1_range,name = "polynomial a"))
+        #### Cones
+        self.constrants_fig.add_trace(go.Scatter(x=cones_x,
+                                                 y=cones_y, name="Cones",mode='markers', marker={
+                        'size': 15,
+                        'line': {'width': 0.5, 'color': 'white'}}))
+
+
+        self.constrants_fig.add_trace(go.Scatter(x=Y_range,
+                                                     y=X_2_range, name="polynomial b"))
+        self.constrants_fig.add_trace(go.Scatter(x=Y_range,
+                                                 y=X_3_range, name="polynomial c"))
+
+
+
+
+
+
+        ##################print relevant data###############################################33
+
+       # gas = state[Constants.GAS]
+       # breaks = state[Constants.BREAK]
+        self.relevant_data = go.Figure(
+            data=[go.Table(header=dict(values=[Constants.ACTUAL_SPEED+str(" IN KMH"),
+                                               Constants.ACCURACY_SPEED+str(" IN %"),
+                                               Constants.ACTUAL_STEERING+str(" IN Degrees"),
+                                               Constants.ACCURACY_STEERING+str(" IN %"),
+                                               Constants.GAS+str(" IN %"),
+                                               Constants.BREAK+str(" IN %"),
+                                               ],  line_color='darkslategray',fill_color='lightskyblue',),
+                           cells=dict(values=[[speed*3.6 for speed  in actual_speed],
+                                              [100*(speed * 3.60 /80) for speed in actual_speed],
+                                              actual_steering,
+                                              [(100 *abs(steering))//22 for steering in actual_steering],
+                                              gas,breaks
+                           ],  line_color='darkslategray',
+                fill_color='lightcyan',) ,name = "relevant data")])
 
         # self.const_fig_data = go.Figure(
         #     data=[go.Table(header=dict(
@@ -190,11 +233,11 @@ class Dash:
         #         ]))])
 
         self.constrants_fig.update_layout(
-            xaxis_title="x value",
-            yaxis_title="y value",
+            xaxis_title="y value",
+            yaxis_title="x value",
 
             xaxis=dict(range=[-15,25]),
-            yaxis=dict(range=[-100,100])
+            yaxis=dict(range=[-15,25])
         )
 
         self.app.layout = html.Div(children=[
@@ -222,6 +265,13 @@ class Dash:
                 id='constrants',
                 figure=self.constrants_fig
             ),
+
+            dcc.Graph(
+                id='relevant data',
+                figure=self.relevant_data
+            ),
+
+
             # dcc.Graph(
             #     id ="const fig data",
             #     figure =self.const_fig_data
@@ -238,7 +288,7 @@ class Dash:
 if __name__ == '__main__':
 
     dic = {
-        Constants.ACTUAL_SPEED:[10,20,20,26],
+        Constants.ACTUAL_SPEED:[10,20,20,17],
         Constants.DESIRABLE_SPEED : [12,14,15,20] ,
         Constants.ACTUAL_STEERING :  [0,-5,5,10] ,
         Constants.DESIRABLE_STEERING : [0,-1,2,7 ] ,
@@ -248,6 +298,12 @@ if __name__ == '__main__':
             Constants.COEFF_C: 1,
             Constants.COEFF_D: 0.1
 
+        },
+        Constants.GAS:[10,20,30,50],
+        Constants.BREAK:[1,24,12,57],
+
+        Constants.Cones:{ Constants.Cones_X:[1,2,3,4],
+                          Constants.Cones_Y:[2,3,5,7]
         },
 
         Constants.POLYNOMIAL_B: {
@@ -269,3 +325,4 @@ if __name__ == '__main__':
     }
     my=Dash(dic)
     my.run()
+    print("yes!!!!!")
