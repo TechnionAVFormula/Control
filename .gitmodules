@@ -1,6 +1,0 @@
-[submodule "Control_dashboard"]
-	path = Control_dashboard
-	url = https://github.com/TechnionAVFormula/Control_dashboard.git
-[submodule "Gym_simulator"]
-	path = Gym_simulator
-	url = https://github.com/TechnionAVFormula/Gym_simulator.git
