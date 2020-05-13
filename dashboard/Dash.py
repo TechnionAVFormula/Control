@@ -1,5 +1,3 @@
-
-
 import dash
 from dash.dependencies import Output, Input
 import dash_core_components as dcc
